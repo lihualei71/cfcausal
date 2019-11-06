@@ -66,23 +66,24 @@ conformal <- function(X, Y,
     return(obj)
 }
 
-predict.conformal <- function(obj, Xtest = NULL,
+#' @export
+predict.conformal <- function(object, Xtest = NULL,
                               alpha = 0.05,
                               wthigh = 20, wtlow = 0.05,
                               ...){
-    type <- obj$type
-    side <- obj$side
+    type <- object$type
+    side <- object$side
     if (!is.null(Xtest)){
-        Yhat_test <- obj$Ymodel(Xtest)
-        wt_test <- obj$wtfun(Xtest)
+        Yhat_test <- object$Ymodel(Xtest)
+        wt_test <- object$wtfun(Xtest)
     } else {
-        Yhat_test <- obj$Yhat_test
-        wt_test <- obj$wt_test
+        Yhat_test <- object$Yhat_test
+        wt_test <- object$wt_test
     }
 
-    wt <- censoring(obj$wt, wthigh, wtlow)
+    wt <- censoring(object$wt, wthigh, wtlow)
     wt_test <- censoring(wt_test, wthigh, wtlow)
-    Yslack <- weightedConformal(obj$Yscore, wt, wt_test, alpha)
+    Yslack <- weightedConformal(object$Yscore, wt, wt_test, alpha)
     if (type == "CQR" && side == "two"){
         Ylow <- Yhat_test[, 1] - Yslack
         Yhigh <- Yhat_test[, 2] + Yslack

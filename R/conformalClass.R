@@ -71,12 +71,13 @@ conformalClass <- function(X, Y,
     return(obj)
 }
 
-predict.conformalClass <- function(obj, Xtest = NULL,
+#' @export
+predict.conformalClass <- function(object, Xtest = NULL,
                                    alpha = 0.05,
                                    wthigh = 20, wtlow = 0.05,
                                    ...){
-    clsp <- obj$clsp
-    nclass <- length(obj$labels)
+    clsp <- object$clsp
+    nclass <- length(object$labels)
     if (clsp && length(alpha) > 1 && length(alpha) < nclass){
         stop("alpha must be a scalar or a vector with length = the number of classes when clsp = TRUE.")
     }
@@ -84,25 +85,25 @@ predict.conformalClass <- function(obj, Xtest = NULL,
         alpha <- rep(alpha, nclass)
     }
     if (!is.null(Xtest)){
-        phat_test <- obj$prmodel(Xtest)
-        wt_test <- obj$wtfun(Xtest)
+        phat_test <- object$prmodel(Xtest)
+        wt_test <- object$wtfun(Xtest)
     } else {
-        phat_test <- obj$phat_test
-        wt_test <- obj$wt_test
+        phat_test <- object$phat_test
+        wt_test <- object$wt_test
     }
-    type <- obj$type
+    type <- object$type
     if (type == "weighted"){
-        mpr <- obj$mpr
+        mpr <- object$mpr
         phat_test <- row_quo(phat_test, mpr)
     }
 
-    wt <- censoring(obj$wt, wthigh, wtlow)
+    wt <- censoring(object$wt, wthigh, wtlow)
     wt_test <- censoring(wt_test, wthigh, wtlow)
     if (!clsp){
-        cutoff <- weightedConformal(obj$prscore, wt, wt_test, 1 - alpha)
+        cutoff <- weightedConformal(object$prscore, wt, wt_test, 1 - alpha)
         cutoff <- matrix(rep(cutoff, nclass), ncol = nclass)
     } else {
-        cutoff <- sapply(obj$prscore, function(score){
+        cutoff <- sapply(object$prscore, function(score){
             weightedConformal(score, wt, wt_test, 1 - alpha)
         })
     }
