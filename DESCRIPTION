@@ -1,0 +1,17 @@
+Package: cfcausal
+Type: Package
+Title: What the Package Does (Title Case)
+Version: 0.1.0.9000
+Author: person("Lihua", "Lei", email = "lihualei@stanford.edu", role = c("aut", "cre"))
+Maintainer: Lihua Lei <lihualei@stanford.edu>
+Description: Conformalized counterfactual inference and causal inference (heterogeneous treatment effect).
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Suggests:
+    gbm,
+    grf,
+    randomForest
+RoxygenNote: 6.1.0
+Imports:
+    methods
