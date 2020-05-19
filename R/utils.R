@@ -1,5 +1,5 @@
 censoring <- function(x, high = 20, low = 0.05){
-    pmin(pmax(x, high), low)
+    pmin(pmax(x, low), high)
 }
 
 guessClass <- function(x){
@@ -22,4 +22,28 @@ freq <- function(x){
 
 row_quo <- function(A, b){
     t(t(A) / b)
+}
+
+gen_cv_ids <- function(n, nfolds, offset = 0){
+    ids <- sample(n, n)
+    quo <- floor(n / nfolds)
+    if (quo == 0){
+        idlist <- lapply(1:nfolds, function(i){
+            if (i <= n){
+                i
+            } else {
+                numeric(0)
+            }
+        })
+    } else {
+        resid <- n - quo * nfolds
+        idlist <- lapply(1:nfolds, function(i){
+            tmp <- (i - 1) * quo + 1:quo
+            if (i <= resid){
+                tmp <- c(tmp, quo * nfolds + i)
+            }
+            return(ids[tmp] + offset)
+        })
+    }
+    return(idlist)
 }

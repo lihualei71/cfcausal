@@ -11,7 +11,8 @@ LazyData: true
 Suggests:
     gbm,
     grf,
-    randomForest
-RoxygenNote: 6.1.0
+    randomForest,
+    bartMachine
+RoxygenNote: 7.0.2
 Imports:
     methods
