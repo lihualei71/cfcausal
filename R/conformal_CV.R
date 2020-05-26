@@ -1,37 +1,14 @@
 conformalCV <- function(X, Y,
-                        type = c("CQR", "mean"),
-                        side = c("two", "above", "below"),
-                        quantiles = NULL,
-                        outfun = NULL,
-                        outparams = list(),
-                        wtfun = NULL,
-                        nfolds = 10,
-                        idlist = NULL){
-    n <- length(Y)
-    type <- type[1]
-    stopifnot(type %in% c("CQR", "mean"))
-    side <- side[1]
-    stopifnot(side %in% c("two", "above", "below"))
-
-    if (is.null(idlist)){
-        idlist <- gen_cv_ids(n, nfolds)
-    }
-    if (!is.list(idlist) || length(idlist) != nfolds){
-        stop("idlist needs to a list of length 'nfolds'")
-    }
-
-    if (is.null(outfun)){
-        outfun <- switch(type,
-                         CQR = quantRF,
-                         mean = RF)
-    }
-
+                        type, side,
+                        quantiles,
+                        outfun, outparams,
+                        wtfun,
+                        nfolds, idlist){
     wtfun0 <- NULL
     if (is.null(wtfun)){
         wtfun <- lapply(1:nfolds, function(k){
             function(X){
                 rep(1, nrow(X))
-                ## rep(1, length(idlist[[k]]))
             }
         })
     } else if (is.function(wtfun)){
@@ -40,6 +17,7 @@ conformalCV <- function(X, Y,
     } else if (!is.list(wtfun) || length(wtfun) != nfolds){
         stop("wtfun must be a function or a list (of functions) of length nfolds")
     }
+    sapply(wtfun, check_wtfun)
     if (is.null(wtfun0)){
         wtfun0 <- wtfun
     }
@@ -56,6 +34,14 @@ conformalCV <- function(X, Y,
             quantiles <- quantiles[1]
         }
         outparams <- c(outparams, list(quantiles = quantiles))
+    }
+
+    n <- length(Y)
+    if (is.null(idlist)){
+        idlist <- gen_cv_ids(n, nfolds)
+    }
+    if (!is.list(idlist) || length(idlist) != nfolds){
+        stop("idlist needs to a list of length 'nfolds'")
     }
 
     outparams0 <- outparams
@@ -85,13 +71,36 @@ conformalCV <- function(X, Y,
                 wtfun = wtfun0,
                 type = type,
                 side = side,
-                quantiles = quantiles, 
+                quantiles = quantiles,
                 nfolds = nfolds,
                 idlist = idlist)
     class(res) <- "conformalCV"
     return(res)
 }
 
+#' Predict Method for conformalCV objects
+#'
+#' Obtains predictive intervals on a testing dataset based on a \code{conformalCV} object
+#' from \code{\link{conformal}} with \code{useCV = TRUE}.
+#'
+#' Given a testing set \eqn{X_1, X_2, \ldots, X_n} and a weight function \eqn{w(x)}, the
+#' weight of the weighted distribution \eqn{p_j = w(X_j) / (w(X_1) + \cdots + w(X_n))}.
+#' In cases where some of \eqn{p_j} are extreme, we truncate \eqn{p_j} at level \code{wthigh}
+#' and \code{wtlow} to ensure stability. If \code{wthigh = Inf, wtlow = 0}, no truncation
+#' is being used.
+#'
+#' @param object an object of class \code{conformalCV}; see \code{\link{conformal}}.
+#' @param Xtest testing covariates.
+#' @param alpha confidence level.
+#' @param wthigh upper truncation level of weights; see Details.
+#' @param wtlow lower truncation level of weights; see Details.
+#'
+#' @return predictive intervals. A data.frame with \code{nrow(Xtest)} rows and two columns:
+#' "lower" for the lower bound and "upper" for the upper bound.
+#'
+#' @seealso
+#' \code{\link{predict.conformalSplit}}, \code{\link{conformal}}, and \code{\link{conformalClass}}.
+#'
 #' @export
 predict.conformalCV <- function(object, Xtest,
                                 alpha = 0.1,
@@ -114,7 +123,7 @@ predict.conformalCV <- function(object, Xtest,
             wtfun(Xtest)
         })
         wt_test <- rowMeans(wt_test)
-    }    
+    }
     avg_wt <- mean(c(wt, wt_test))
     wt <- censoring(wt / avg_wt, wthigh, wtlow)
     wt_test <- censoring(wt_test / avg_wt, wthigh, wtlow)
@@ -127,12 +136,12 @@ predict.conformalCV <- function(object, Xtest,
     if (type == "CQR" && side == "two"){
         CI <- sapply(1:length(qt), function(i){
             Ylo <- lapply(info, function(x){
-                x$Yhat_test[i, 1] - x$Yscore 
+                x$Yhat_test[i, 1] - x$Yscore
             })
             Ylo <- do.call(c, Ylo)
             Ylo <- -weightedConformalCutoff(-Ylo, wt, qt[i])
             Yup <- lapply(info, function(x){
-                x$Yhat_test[i, 2] + x$Yscore 
+                x$Yhat_test[i, 2] + x$Yscore
             })
             Yup <- do.call(c, Yup)
             Yup <- weightedConformalCutoff(Yup, wt, qt[i])
@@ -141,36 +150,36 @@ predict.conformalCV <- function(object, Xtest,
     } else if (type == "mean" && side == "two"){
         CI <- sapply(1:length(qt), function(i){
             Ylo <- lapply(info, function(x){
-                x$Yhat_test[i] - x$Yscore 
+                x$Yhat_test[i] - x$Yscore
             })
-            Ylo <- do.call(c, Ylo)            
+            Ylo <- do.call(c, Ylo)
             Ylo <- -weightedConformalCutoff(-Ylo, wt, qt[i])
             Yup <- lapply(info, function(x){
-                x$Yhat_test[i] + x$Yscore 
+                x$Yhat_test[i] + x$Yscore
             })
-            Yup <- do.call(c, Yup)            
+            Yup <- do.call(c, Yup)
             Yup <- weightedConformalCutoff(Yup, wt, qt[i])
-            c(Ylo, Yup)            
+            c(Ylo, Yup)
         })
     } else if (side == "above"){
         CI <- sapply(1:length(qt), function(i){
             Ylo <- -Inf
             Yup <- lapply(info, function(x){
-                x$Yhat_test[i] + x$Yscore 
+                x$Yhat_test[i] + x$Yscore
             })
             Yup <- do.call(c, Yup)
             Yup <- weightedConformalCutoff(Yup, wt, qt[i])
-            c(Ylo, Yup)            
+            c(Ylo, Yup)
         })
     } else if (side == "below"){
-        CI <- sapply(1:length(qt), function(i){        
+        CI <- sapply(1:length(qt), function(i){
             Ylo <- lapply(info, function(x){
-                x$Yhat_test[i] - x$Yscore 
+                x$Yhat_test[i] - x$Yscore
             })
             Ylo <- do.call(c, Ylo)
             Ylo <- -weightedConformalCutoff(-Ylo, wt, qt[i])
             Yup <- Inf
-            c(Ylo, Yup)            
+            c(Ylo, Yup)
         })
     }
 
@@ -178,4 +187,3 @@ predict.conformalCV <- function(object, Xtest,
                       upper = as.numeric(CI[2, ]))
     return(res)
 }
-

@@ -1,28 +1,15 @@
 conformalSplit <- function(X, Y,
-                           type = c("CQR", "mean"),
-                           side = c("two", "above", "below"),
-                           quantiles = NULL,
-                           outfun = NULL,
-                           outparams = list(),
-                           wtfun = NULL,
-                           trainprop = 0.75,
-                           trainid = NULL){
-    n <- length(Y)
-    type <- type[1]
-    stopifnot(type %in% c("CQR", "mean"))
-    side <- side[1]
-    stopifnot(side %in% c("two", "above", "below"))
-
-    if (is.null(outfun)){
-        outfun <- switch(type,
-                         CQR = quantRF,
-                         mean = RF)
-    }
-
+                           type, side,
+                           quantiles,
+                           outfun, outparams,
+                           wtfun,
+                           trainprop, trainid){
     if (is.null(wtfun)){
         wtfun <- function(X){
             rep(1, nrow(X))
         }
+    } else if (is.function(wtfun)){
+        check_wtfun(wtfun)
     }
 
     if (type == "CQR"){
@@ -39,6 +26,7 @@ conformalSplit <- function(X, Y,
         outparams <- c(outparams, list(quantiles = quantiles))
     }
 
+    n <- length(Y)
     if (is.null(trainid)){
         trainid <- sample(n, floor(n * trainprop))
     }
@@ -58,11 +46,38 @@ conformalSplit <- function(X, Y,
 
     obj <- list(Yscore = Yscore, wt = wt,
                 Ymodel = Ymodel, wtfun = wtfun,
-                type = type, side = side)
+                type = type,
+                side = side,
+                quantiles = quantiles,
+                trainprop = trainprop,
+                trainid = trainid)
     class(obj) <- "conformalSplit"
     return(obj)
 }
 
+#' Predict Method for conformalSplit objects
+#'
+#' Obtains predictive intervals on a testing dataset based on a \code{conformalSplit} object
+#' from \code{\link{conformal}} with \code{useCV = FALSE}.
+#'
+#' Given a testing set \eqn{X_1, X_2, \ldots, X_n} and a weight function \eqn{w(x)}, the
+#' weight of the weighted distribution \eqn{p_j = w(X_j) / (w(X_1) + \cdots + w(X_n))}.
+#' In cases where some of \eqn{p_j} are extreme, we truncate \eqn{p_j} at level \code{wthigh}
+#' and \code{wtlow} to ensure stability. If \code{wthigh = Inf, wtlow = 0}, no truncation
+#' is being used.
+#'
+#' @param object an object of class \code{conformalSplit}; see \code{\link{conformal}}.
+#' @param Xtest testing covariates.
+#' @param alpha confidence level.
+#' @param wthigh upper truncation level of weights; see Details.
+#' @param wtlow lower truncation level of weights; see Details.
+#'
+#' @return predictive intervals. A data.frame with \code{nrow(Xtest)} rows and two columns:
+#' "lower" for the lower bound and "upper" for the upper bound.
+#'
+#' @seealso
+#' \code{\link{predict.conformalCV}}, \code{\link{conformal}}, and \code{\link{conformalClass}}.
+#'
 #' @export
 predict.conformalSplit <- function(object, Xtest,
                                    alpha = 0.1,
@@ -82,7 +97,7 @@ predict.conformalSplit <- function(object, Xtest,
     qt <- (1 + wt_test / totw) * (1 - alpha)
     qt <- pmin(qt, 1)
     Yslack <- weightedConformalCutoff(object$Yscore, wt, qt)
-    
+
     if (type == "CQR" && side == "two"){
         Ylo <- Yhat_test[, 1] - Yslack
         Yup <- Yhat_test[, 2] + Yslack
