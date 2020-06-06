@@ -81,14 +81,14 @@ Xtest <- matrix(rnorm(ntest * d), nrow = ntest)
 CIfun <- conformalIte(X, Y, T, alpha = 0.1, 
                       algo = "nest", exact = FALSE, type = "CQR",
                       quantiles = c(0.05, 0.95), 
-					  outfun = "quantRF", useCV = FALSE)
+                      outfun = "quantRF", useCV = FALSE)
 CIfun(Xtest)
 
 # Exact nested method
 CIfun <- conformalIte(X, Y, T, alpha = 0.1, 
                       algo = "nest", exact = TRUE, type = "CQR",
                       quantiles = c(0.05, 0.95), 
-					  outfun = "quantRF",  useCV = FALSE)
+                      outfun = "quantRF",  useCV = FALSE)
 CIfun(Xtest)
 
 # naive method
@@ -105,7 +105,7 @@ Y1test <- Xtest %*% beta + rnorm(ntest)
 Y0test <- rnorm(ntest)
 Ytest <- ifelse(Ttest == 1, Y1test, Y0test)
 CIfun <- conformalIte(X, Y, T, alpha = 0.1, 
-	                  algo = "counterfactual", type = "CQR",
+                      algo = "counterfactual", type = "CQR",
                       quantiles = c(0.05, 0.95), 
                       outfun = "quantRF",  useCV = FALSE)
 CIfun(Xtest, Ytest, Ttest)
