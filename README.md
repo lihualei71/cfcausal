@@ -13,7 +13,7 @@ This R package implements the weighted conformal inference procedure for counter
 
 ```
 if (!require("devtools")){
-	install.packages("devtools")
+    install.packages("devtools")
 }
 devtools::install_github("lihualei71/cfcausal")
 ```
@@ -44,13 +44,13 @@ Xtest <- matrix(rnorm(ntest * d), nrow = ntest)
 
 # Run weighted split CQR
 obj <- conformalCf(X, Y, type = "CQR", 
-	               quantiles = c(0.05, 0.95),
+                   quantiles = c(0.05, 0.95),
                    outfun = "quantRF", useCV = FALSE)
 predict(obj, Xtest, alpha = 0.1)
 
 # Run weighted CQR-CV+
 obj <- conformalCf(X, Y, type = "CQR", 
-	               quantiles = c(0.05, 0.95),
+                   quantiles = c(0.05, 0.95),
                    outfun = "quantRF", useCV = TRUE)
 predict(obj, Xtest, alpha = 0.1)
 ```
@@ -79,16 +79,14 @@ Xtest <- matrix(rnorm(ntest * d), nrow = ntest)
 
 # Inexact nested method
 CIfun <- conformalIte(X, Y, T, alpha = 0.1, 
-                      algo = "nest", exact = FALSE, 
-					  type = "CQR",
+                      algo = "nest", exact = FALSE, type = "CQR",
                       quantiles = c(0.05, 0.95), 
 					  outfun = "quantRF", useCV = FALSE)
 CIfun(Xtest)
 
 # Exact nested method
 CIfun <- conformalIte(X, Y, T, alpha = 0.1, 
-                      algo = "nest", exact = TRUE, 
-					  type = "CQR",
+                      algo = "nest", exact = TRUE, type = "CQR",
                       quantiles = c(0.05, 0.95), 
 					  outfun = "quantRF",  useCV = FALSE)
 CIfun(Xtest)
@@ -97,7 +95,7 @@ CIfun(Xtest)
 CIfun <- conformalIte(X, Y, T, alpha = 0.1, 
                       algo = "naive", type = "CQR",
                       quantiles = c(0.05, 0.95), 
-					  outfun = "quantRF",  useCV = FALSE)
+                      outfun = "quantRF",  useCV = FALSE)
 CIfun(Xtest)
 
 # counterfactual method, Y and T needs to be observed
@@ -109,6 +107,6 @@ Ytest <- ifelse(Ttest == 1, Y1test, Y0test)
 CIfun <- conformalIte(X, Y, T, alpha = 0.1, 
 	                  algo = "counterfactual", type = "CQR",
                       quantiles = c(0.05, 0.95), 
-					  outfun = "quantRF",  useCV = FALSE)
+                      outfun = "quantRF",  useCV = FALSE)
 CIfun(Xtest, Ytest, Ttest)
 ```
