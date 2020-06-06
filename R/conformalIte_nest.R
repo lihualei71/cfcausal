@@ -1,3 +1,5 @@
+## Nested methods of Conformal inference for individual treatment effects for subjects with both
+## missing potential outcome. See ?conformalIte
 conformalIteNest <- function(X, Y, T,
                              alpha = 0.1,
                              type = c("CQR", "mean"),
@@ -48,7 +50,7 @@ conformalIteNest <- function(X, Y, T,
                         CQR = quantRF,
                         mean = RF)
     }
-    
+
     ## Reset effective alpha based on exact
     if (exact){
         alpha <- alpha / 2
@@ -128,7 +130,7 @@ conformalIteNest <- function(X, Y, T,
         ## Exact intervals
         CIfun <- function(X){
             res <- conformalInt(Xcf, as.matrix(CI_cf),
-                                citype, 
+                                citype,
                                 lofun, loquantile, loparams,
                                 upfun, upquantile, upparams,
                                 NULL,
@@ -138,7 +140,7 @@ conformalIteNest <- function(X, Y, T,
             predict(res, X, alpha, wthigh, wtlow)
         }
     } else {
-        ## Inexact intervals 
+        ## Inexact intervals
         if (citype == "CQR"){
             loparams <- c(list(Y = CI_cf[, 1], X = Xcf, quantiles = loquantile), loparams)
             upparams <- c(list(Y = CI_cf[, 2], X = Xcf, quantiles = upquantile), upparams)
@@ -153,7 +155,7 @@ conformalIteNest <- function(X, Y, T,
         }
     }
 
-    res <- list(CIfun = CIfun, 
+    res <- list(CIfun = CIfun,
                 CI_cf = CI_cf, cfid = cfid)
     class(res) <- "conformalIteNest"
     return(res)

@@ -55,7 +55,8 @@ a \code{conformalSplit} object when \code{useCV = FALSE} or a \code{conformalCV}
 when \code{useCV = TRUE}. See \code{\link{conformal}} for details.
 }
 \description{
-\code{conformalCf} supports both split conformal inference and CV+,
+\code{conformalCf} computes intervals for counterfactuals or outcome with missing values in general.
+It supports both split conformal inference and CV+,
 including weighted Jackknife+ as a special case. For each type, it supports both conformalized
 quantile regression (CQR) and standard conformal inference based on mean regression.
 }

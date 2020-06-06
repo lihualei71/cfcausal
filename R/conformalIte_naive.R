@@ -1,3 +1,5 @@
+## Naive methods of Conformal inference for individual treatment effects for subjects with both
+## missing potential outcome. See ?conformalIte
 conformalIteNaive <- function(X, Y, T,
                               type = c("CQR", "mean"),
                               side = c("two", "above", "below"),
@@ -22,7 +24,7 @@ conformalIteNaive <- function(X, Y, T,
     if (is.null(psfun)){
         psfun <- Boosting
     }
-    
+
     n <- length(Y)
 
     Y1 <- Y0 <- Y
@@ -49,7 +51,7 @@ conformalIteNaive <- function(X, Y, T,
         predict(obj1, X, alpha = alpha / 2,
                 wthigh = wthigh, wtlow = wtlow)
     }
-    
+
     estimand0 <- "missing"
     side0 <- switch(side,
                     two = "two",

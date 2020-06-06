@@ -1,3 +1,4 @@
+## Generic weighted interval CV+. See ?conformalInt
 conformalIntCV <- function(X, Y,
                            type = c("CQR", "mean"),
                            lofun = NULL,

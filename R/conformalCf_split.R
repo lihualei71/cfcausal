@@ -1,4 +1,5 @@
-conformalCf_split <- function(X, Y, 
+## Split conformal inference for counterfactuals. See ?conformalCf
+conformalCf_split <- function(X, Y,
                               estimand = c("unconditional",
                                            "nonmissing",
                                            "missing"),
@@ -35,7 +36,7 @@ conformalCf_split <- function(X, Y,
     trainid1 <- sample(n1, floor(n1 * trainprop))
     trainid0 <- sample(n0, floor(n0 * trainprop))
     trainid <- c(inds1[trainid1], inds0[trainid0])
-    Xtrain <- X[trainid, ]    
+    Xtrain <- X[trainid, ]
     Ttrain <- T[trainid]
 
     psparams0 <- psparams

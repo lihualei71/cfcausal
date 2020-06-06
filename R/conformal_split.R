@@ -1,3 +1,4 @@
+## Generic weighted split conformal inference. See ?conformal
 conformalSplit <- function(X, Y,
                            type, side,
                            quantiles,

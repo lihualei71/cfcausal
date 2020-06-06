@@ -1,3 +1,4 @@
+## Generic weighted interval conformal inference. See ?conformalInt
 conformalIntSplit <- function(X, Y,
                               type = c("CQR", "mean"),
                               lofun = NULL,

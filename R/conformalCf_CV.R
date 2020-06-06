@@ -1,4 +1,5 @@
-conformalCf_CV <- function(X, Y, 
+## CV+ for counterfactuals. See ?conformalCf
+conformalCf_CV <- function(X, Y,
                            estimand = c("unconditional",
                                         "nonmissing",
                                         "missing"),
@@ -8,7 +9,7 @@ conformalCf_CV <- function(X, Y,
                            outfun = NULL,
                            outparams = list(),
                            psfun = NULL,
-                           psparams = list(), 
+                           psparams = list(),
                            nfolds = 10){
     estimand <- estimand[1]
     type <- type[1]
@@ -50,7 +51,7 @@ conformalCf_CV <- function(X, Y,
                 1 / ps
             }
         })
-        psparams <- c(list(Y = T, X = X), psparams0)        
+        psparams <- c(list(Y = T, X = X), psparams0)
         wtfun_test <- function(X){
             ps <- do.call(psfun, c(psparams, list(Xtest = X)))
             1 / ps
@@ -73,7 +74,7 @@ conformalCf_CV <- function(X, Y,
                 (1 - ps) / ps
             }
         })
-        psparams <- c(list(Y = T, X = X), psparams0)        
+        psparams <- c(list(Y = T, X = X), psparams0)
         wtfun_test <- function(X){
             ps <- do.call(psfun, c(psparams, list(Xtest = X)))
             (1 - ps) / ps
@@ -82,11 +83,11 @@ conformalCf_CV <- function(X, Y,
 
     X <- X[inds1, ]
     Y <- Y[inds1]
-    res <- conformalCV(X, Y, 
+    res <- conformalCV(X, Y,
                        type, side,
                        quantiles,
                        outfun, outparams,
-                       wtfun, 
+                       wtfun,
                        nfolds, idlist1)
     res$wtfun <- wtfun_test
     return(res)

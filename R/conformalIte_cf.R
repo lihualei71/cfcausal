@@ -1,3 +1,5 @@
+## Conformal inference for individual treatment effects for subjects with only one
+## missing potential outcome. See ?conformalIte
 conformalIteCf <- function(X, Y, T,
                            type = c("CQR", "mean"),
                            side = c("two", "above", "below"),
@@ -13,7 +15,7 @@ conformalIteCf <- function(X, Y, T,
     stopifnot(type %in% c("CQR", "mean"))
     side <- side[1]
     stopifnot(side %in% c("two", "above", "below"))
-    
+
     if (is.null(outfun)){
         outfun <- switch(type,
                          CQR = quantRF,
@@ -22,7 +24,7 @@ conformalIteCf <- function(X, Y, T,
     if (is.null(psfun)){
         psfun <- Boosting
     }
-    
+
     obj <- conformalIteNaive(X, Y, T,
                              type, side,
                              quantiles,

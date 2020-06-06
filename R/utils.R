@@ -1,7 +1,9 @@
+## Truncate a sequence from both sides
 censoring <- function(x, high = 20, low = 0.05){
     pmin(pmax(x, low), high)
 }
 
+## Guess the type of a variable
 guessClass <- function(x){
     if (length(unique(x)) == 2 || is.logical(x) || (is.factor(x) && nlevels(x) == 2)){
         dist <- "bernoulli"
@@ -13,6 +15,7 @@ guessClass <- function(x){
     return(dist)
 }
 
+## Frequency of each level in a factor
 freq <- function(x){
     if (!is.factor(x)){
         x <- as.factor(x)
@@ -20,10 +23,12 @@ freq <- function(x){
     as.numeric(table(x)) / length(x)
 }
 
+## Divide each row of A by a vector b
 row_quo <- function(A, b){
     t(t(A) / b)
 }
 
+## Generate a list of indices for cross-validation
 gen_cv_ids <- function(n, nfolds, offset = 0){
     ids <- sample(n, n)
     quo <- floor(n / nfolds)
@@ -48,6 +53,7 @@ gen_cv_ids <- function(n, nfolds, offset = 0){
     return(idlist)
 }
 
+## Convert a valid outfun string to the function
 str_fun <- function(method){
     if (method == "RF"){
         if (!requireNamespace("randomForest")){
@@ -84,6 +90,7 @@ str_fun <- function(method){
     }
 }
 
+## Check if the required inputs are included in outfun
 check_outfun <- function(fun, type){
     args <- methods::formalArgs(fun)
     if (type == "CQR"){
@@ -99,6 +106,7 @@ check_outfun <- function(fun, type){
     }
 }
 
+## Check if the required inputs are included in wtfun
 check_wtfun <- function(fun, type){
     args <- formalArgs(fun)
     if (!("X" %in% args)){

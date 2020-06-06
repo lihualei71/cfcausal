@@ -1,3 +1,4 @@
+## Generic weighted CV+. See ?conformal
 conformalCV <- function(X, Y,
                         type, side,
                         quantiles,
