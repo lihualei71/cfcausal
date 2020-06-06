@@ -19,7 +19,7 @@ devtools::install_github("lihualei71/cfcausal")
 ```
 
 ## Usage Examples
-We illustrate the usage of cfcausal package using a synthetic example. For details please read the manual. 
+We illustrate the usage of cfcausal package using simple synthetic datasets. For details please read the manual. 
 
 ```
 #### Conformal inference of counterfactuals
