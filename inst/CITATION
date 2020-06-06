@@ -1,0 +1,10 @@
+citHeader("To cite cfcausal in publications, please use:")
+
+citEntry(entry = "article",
+         author = "Lihua Lei and Emmanuel Cand\`es",
+         title = "Conformal Inference of Counterfactuals and Individual Treatment Effects",
+         journal = "Arxiv",
+         year = "2020",
+         url = "https://arxiv.org/abs/",
+         textVersion = "Lei, L., & Cand\`es, E. (2020). Conformal Inference of Counterfactuals and Individual Treatment Effects. arXiv preprint arXiv:."
+         )
