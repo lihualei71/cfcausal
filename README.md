@@ -18,7 +18,7 @@ if (!require("devtools")){
 devtools::install_github("lihualei71/cfcausal")
 ```
 
-We suggest installing [grf](https://cran.r-project.org/web/packages/grf/grf.pdf) package, [randomForest](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf) package, [gbm](https://cran.r-project.org/web/packages/gbm/gbm.pdf) package and [bartMachine](https://cran.r-project.org/web/packages/bartMachine/bartMachine.pdf) package to take advantage of the built-in learners. 
+We suggest installing [grf](https://cran.r-project.org/web/packages/grf/grf.pdf), [randomForest](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf), [gbm](https://cran.r-project.org/web/packages/gbm/gbm.pdf) and [bartMachine](https://cran.r-project.org/web/packages/bartMachine/bartMachine.pdf) to take advantage of the built-in learners. 
 
 ## Usage Examples
 We illustrate the usage of cfcausal package using simple synthetic datasets. For details please read the manual. 
