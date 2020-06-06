@@ -94,12 +94,13 @@ conformalCV <- function(X, Y,
 #' @param alpha confidence level.
 #' @param wthigh upper truncation level of weights; see Details.
 #' @param wtlow lower truncation level of weights; see Details.
+#' @param ... other arguments
 #'
 #' @return predictive intervals. A data.frame with \code{nrow(Xtest)} rows and two columns:
 #' "lower" for the lower bound and "upper" for the upper bound.
 #'
 #' @seealso
-#' \code{\link{predict.conformalSplit}}, \code{\link{conformal}}, and \code{\link{conformalClass}}.
+#' \code{\link{predict.conformalSplit}}, \code{\link{conformal}}.
 #'
 #' @export
 predict.conformalCV <- function(object, Xtest,

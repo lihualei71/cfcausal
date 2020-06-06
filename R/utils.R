@@ -50,32 +50,32 @@ gen_cv_ids <- function(n, nfolds, offset = 0){
 
 str_fun <- function(method){
     if (method == "RF"){
-        if (!require("randomForest")){
+        if (!requireNamespace("randomForest")){
             stop("randomForest package needs to be installed")
         }
         return(RF)
     } else if (method == "quantRF"){
-        if (!require("grf")){
+        if (!requireNamespace("grf")){
             stop("grf package needs to be installed")
         }
         return(quantRF)
     } else if (method == "Boosting"){
-        if (!require("gbm")){
+        if (!requireNamespace("gbm")){
             stop("gbm package needs to be installed")
         }
         return(Boosting)
     } else if (method == "quantBoosting"){
-        if (!require("gbm")){
+        if (!requireNamespace("gbm")){
             stop("gbm package needs to be installed")
         }
         return(quantBoosting)
     } else if (method == "BART"){
-        if (!require("bartMachine")){
+        if (!requireNamespace("bartMachine")){
             stop("bartMachine package needs to be installed")
         }
         return(BART)
     } else if (method == "quantBART"){
-        if (!require("bartMachine")){
+        if (!requireNamespace("bartMachine")){
             stop("bartMachine package needs to be installed")
         }
         return(quantBART)
@@ -85,7 +85,7 @@ str_fun <- function(method){
 }
 
 check_outfun <- function(fun, type){
-    args <- formalArgs(fun)
+    args <- methods::formalArgs(fun)
     if (type == "CQR"){
         res <- all(c("Y", "X", "Xtest", "quantiles") %in% args)
         if (!res){

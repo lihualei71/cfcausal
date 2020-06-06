@@ -9,24 +9,8 @@ conformalIntSplit <- function(X, Y,
                               wtfun = NULL,
                               trainprop = 0.75,
                               trainid = NULL){
-    if (!is.matrix(Y) || ncol(Y) != 2){
-        stop("Y must a matrix with 2 columns")
-    }
     n <- nrow(Y)
-    type <- type[1]
-    stopifnot(type %in% c("CQR", "mean"))
 
-    if (is.null(lofun)){
-        lofun <- switch(type,
-                        CQR = quantRF,
-                        mean = RF)
-    }
-    if (is.null(upfun)){
-        upfun <- switch(type,
-                        CQR = quantRF,
-                        mean = RF)
-    }
-    
     if (is.null(wtfun)){
         wtfun <- function(Xtest){
             rep(1, nrow(Xtest))
@@ -54,7 +38,7 @@ conformalIntSplit <- function(X, Y,
         loparams <- c(list(Y = Ytrain[, 1], X = Xtrain), loparams)
         upparams <- c(list(Y = Ytrain[, 2], X = Xtrain), upparams)
     }
-    
+
     Ylo_model <- function(X){
         do.call(lofun, c(loparams, list(Xtest = X)))
     }
@@ -68,11 +52,39 @@ conformalIntSplit <- function(X, Y,
 
     obj <- list(Yscore = Yscore, wt = wt,
                 Ymodel = Ymodel, wtfun = wtfun,
-                type = type)
+                type = type,
+                loquantile = loquantile,
+                upquantile = upquantile,
+                trainprop = trainprop,
+                trainid = trainid)
     class(obj) <- "conformalIntSplit"
     return(obj)
 }
 
+#' Predict Method for conformalIntSplit objects
+#'
+#' Obtains predictive intervals on a testing dataset based on a \code{conformalIntSplit} object
+#' from \code{\link{conformalInt}} with \code{useCV = FALSE}.
+#'
+#' Given a testing set \eqn{X_1, X_2, \ldots, X_n} and a weight function \eqn{w(x)}, the
+#' weight of the weighted distribution \eqn{p_j = w(X_j) / (w(X_1) + \cdots + w(X_n))}.
+#' In cases where some of \eqn{p_j} are extreme, we truncate \eqn{p_j} at level \code{wthigh}
+#' and \code{wtlow} to ensure stability. If \code{wthigh = Inf, wtlow = 0}, no truncation
+#' is being used.
+#'
+#' @param object an object of class \code{conformalIntSplit}; see \code{\link{conformalInt}}.
+#' @param Xtest testing covariates.
+#' @param alpha confidence level.
+#' @param wthigh upper truncation level of weights; see Details.
+#' @param wtlow lower truncation level of weights; see Details.
+#' @param ... other arguments
+#'
+#' @return predictive intervals. A data.frame with \code{nrow(Xtest)} rows and two columns:
+#' "lower" for the lower bound and "upper" for the upper bound.
+#'
+#' @seealso
+#' \code{\link{predict.conformalIntCV}}, \code{\link{conformalInt}}.
+#'
 #' @export
 predict.conformalIntSplit <- function(object, Xtest,
                                       alpha = 0.1,
@@ -92,7 +104,7 @@ predict.conformalIntSplit <- function(object, Xtest,
     qt <- (1 + wt_test / totw) * (1 - alpha)
     qt <- pmin(qt, 1)
     Yslack <- weightedConformalCutoff(object$Yscore, wt, qt)
-    
+
     Ylo <- Yhat_test[, 1] - Yslack
     Yup <- Yhat_test[, 2] + Yslack
 

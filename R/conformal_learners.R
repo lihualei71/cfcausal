@@ -1,3 +1,4 @@
+## quantile random forest. grf package needed
 quantRF <- function(Y, X, Xtest, quantiles, ...){
     fit <- grf::quantile_forest(X, Y, quantiles = quantiles, ...)
     res <- predict(fit, Xtest, quantiles = quantiles)
@@ -9,6 +10,7 @@ quantRF <- function(Y, X, Xtest, quantiles, ...){
     return(res)
 }
 
+## random forest. randomForest package needed
 RF <- function(Y, X, Xtest, ...){
     fit <- randomForest::randomForest(x = X, y = Y, ...)
     dist <- guessClass(Y)
@@ -25,6 +27,7 @@ RF <- function(Y, X, Xtest, ...){
     return(res)
 }
 
+## quantile gradient boosting. gbm package needed
 quantBoosting <- function(Y, X, Xtest, quantiles, n.trees = 100, ...){
     if (class(X) != "data.frame"){
         X <- as.data.frame(X)
@@ -42,6 +45,7 @@ quantBoosting <- function(Y, X, Xtest, quantiles, n.trees = 100, ...){
     return(res)
 }
 
+## gradient boosting. gbm package needed
 Boosting <- function(Y, X, Xtest, n.trees = 100, ...){
     if (class(X) != "data.frame"){
         X <- as.data.frame(X)
@@ -52,7 +56,7 @@ Boosting <- function(Y, X, Xtest, n.trees = 100, ...){
     if (distribution == "bernoulli" && is.factor(Y)){
         Y <- as.numeric(Y) - 1
     }
-    data <- data.frame(Y = Y, X)    
+    data <- data.frame(Y = Y, X)
     fit <- gbm::gbm(Y ~ ., distribution = distribution, data = data, n.trees = n.trees, ...)
     res <- predict(fit, Xtest, type = "response", n.trees = n.trees)
     if (distribution == "multinomial"){
@@ -61,6 +65,7 @@ Boosting <- function(Y, X, Xtest, n.trees = 100, ...){
     return(res)
 }
 
+## posterior quantiles of BART. bartMachine package needed
 quantBART <- function(Y, X, Xtest, quantiles,
                       ndpost = 100, ...){
     if (class(X) != "data.frame"){
@@ -96,7 +101,8 @@ quantBART <- function(Y, X, Xtest, quantiles,
     return(res)
 }
 
-BART <- function(Y, X, Xtest, 
+## BART. bartMachine package needed
+BART <- function(Y, X, Xtest,
                  ndpost = 100, ...){
     if (class(X) != "data.frame"){
         X <- as.data.frame(X)

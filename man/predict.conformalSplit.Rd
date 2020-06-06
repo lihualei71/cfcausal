@@ -16,6 +16,8 @@
 \item{wthigh}{upper truncation level of weights; see Details.}
 
 \item{wtlow}{lower truncation level of weights; see Details.}
+
+\item{...}{other arguments}
 }
 \value{
 predictive intervals. A data.frame with \code{nrow(Xtest)} rows and two columns:
@@ -33,5 +35,5 @@ and \code{wtlow} to ensure stability. If \code{wthigh = Inf, wtlow = 0}, no trun
 is being used.
 }
 \seealso{
-\code{\link{predict.conformalCV}}, \code{\link{conformal}}, and \code{\link{conformalClass}}.
+\code{\link{predict.conformalCV}}, \code{\link{conformal}}.
 }

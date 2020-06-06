@@ -1,4 +1,4 @@
-#' Conformal inference with continuous outcomes
+#' Generic Conformal inference
 #'
 #' \code{conformal} is a framework for weighted and unweighted conformal inference with continuous
 #' outcomes. It supports both weighted split conformal inference and weighted CV+,
@@ -83,8 +83,7 @@
 #' }
 #'
 #' @seealso
-#' \code{\link{predict.conformalSplit}}, \code{\link{predict.conformalCV}}, and
-#' \code{\link{conformalClass}}.
+#' \code{\link{predict.conformalSplit}}, \code{\link{predict.conformalCV}}.
 #'
 #' @examples
 #' \donttest{# Generate data from a linear model
@@ -107,7 +106,7 @@
 #'
 #' # Run unweighted standard split conformal inference with the built-in random forest learner
 #' # randomForest package needs to be installed
-#' obj <- conformal(X, Y, type = "mean", quantiles = c(0.05, 0.95),
+#' obj <- conformal(X, Y, type = "mean",
 #'                  outfun = "RF", wtfun = NULL, useCV = FALSE)
 #' predict(obj, Xtest, alpha = 0.1)
 #'
@@ -119,7 +118,7 @@
 #'
 #' # Run unweighted standard CV+ with the built-in random forest learner
 #' # randomForest package needs to be installed
-#' obj <- conformal(X, Y, type = "mean", quantiles = c(0.05, 0.95),
+#' obj <- conformal(X, Y, type = "mean",
 #'                  outfun = "RF", wtfun = NULL, useCV = TRUE)
 #' predict(obj, Xtest, alpha = 0.1)
 #'
@@ -154,7 +153,7 @@
 #' }
 #' X <- as.data.frame(X)
 #' Xtest <- as.data.frame(Xtest)
-#' obj <- conformal(X, Y, type = "mean", quantiles = c(0.05, 0.95),
+#' obj <- conformal(X, Y, type = "mean",
 #'                  outfun = linearReg, wtfun = NULL, useCV = FALSE)
 #' predict(obj, Xtest, alpha = 0.1)
 #' }
@@ -176,8 +175,8 @@ conformal <- function(X, Y,
 
     if (is.null(outfun)){
         outfun <- switch(type,
-                         CQR = "quantRF",
-                         mean = "RF")
+                         CQR = quantRF,
+                         mean = RF)
     } else if (is.character(outfun)){
         outfun <- str_fun(outfun[1])
     } else if (is.function(outfun)){

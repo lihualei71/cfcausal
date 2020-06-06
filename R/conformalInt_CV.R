@@ -9,29 +9,13 @@ conformalIntCV <- function(X, Y,
                            wtfun = NULL,
                            nfolds = 10,
                            idlist = NULL){
-    if (!is.matrix(Y) || ncol(Y) != 2){
-        stop("Y must a matrix with 2 columns")
-    }
     n <- nrow(Y)
-    type <- type[1]
-    stopifnot(type %in% c("CQR", "mean"))
 
     if (is.null(idlist)){
         idlist <- gen_cv_ids(n, nfolds)
     }
     if (!is.list(idlist) || length(idlist) != nfolds){
         stop("idlist needs to a list of length 'nfolds'")
-    }
-    
-    if (is.null(lofun)){
-        lofun <- switch(type,
-                        CQR = quantRF,
-                        mean = RF)
-    }
-    if (is.null(upfun)){
-        upfun <- switch(type,
-                        CQR = quantRF,
-                        mean = RF)
     }
 
     wtfun0 <- NULL
@@ -56,7 +40,8 @@ conformalIntCV <- function(X, Y,
             stop("loquantile and upquantile should be provided if CQR is used.")
         }
         loparams <- c(list(quantiles = loquantile), loparams)
-        upparams <- c(list(quantiles = upquantile), upparams)    }
+        upparams <- c(list(quantiles = upquantile), upparams)
+    }
 
     loparams0 <- loparams
     upparams0 <- upparams
@@ -98,6 +83,30 @@ conformalIntCV <- function(X, Y,
     return(res)
 }
 
+#' Predict Method for conformalIntCV objects
+#'
+#' Obtains predictive intervals on a testing dataset based on a \code{conformalIntCV} object
+#' from \code{\link{conformalInt}} with \code{useCV = TRUE}.
+#'
+#' Given a testing set \eqn{X_1, X_2, \ldots, X_n} and a weight function \eqn{w(x)}, the
+#' weight of the weighted distribution \eqn{p_j = w(X_j) / (w(X_1) + \cdots + w(X_n))}.
+#' In cases where some of \eqn{p_j} are extreme, we truncate \eqn{p_j} at level \code{wthigh}
+#' and \code{wtlow} to ensure stability. If \code{wthigh = Inf, wtlow = 0}, no truncation
+#' is being used.
+#'
+#' @param object an object of class \code{conformalIntCV}; see \code{\link{conformalInt}}.
+#' @param Xtest testing covariates.
+#' @param alpha confidence level.
+#' @param wthigh upper truncation level of weights; see Details.
+#' @param wtlow lower truncation level of weights; see Details.
+#' @param ... other arguments
+#'
+#' @return predictive intervals. A data.frame with \code{nrow(Xtest)} rows and two columns:
+#' "lower" for the lower bound and "upper" for the upper bound.
+#'
+#' @seealso
+#' \code{\link{predict.conformalIntSplit}}, \code{\link{conformalInt}}.
+#'
 #' @export
 predict.conformalIntCV <- function(object, Xtest,
                                    alpha = 0.1,
@@ -122,7 +131,7 @@ predict.conformalIntCV <- function(object, Xtest,
             wtfun(Xtest)
         })
         wt_test <- rowMeans(wt_test)
-    }    
+    }
     avg_wt <- mean(c(wt, wt_test))
     wt <- censoring(wt / avg_wt, wthigh, wtlow)
     wt_test <- censoring(wt_test / avg_wt, wthigh, wtlow)
@@ -134,12 +143,12 @@ predict.conformalIntCV <- function(object, Xtest,
 
     CI <- sapply(1:length(qt), function(i){
         Ylo <- lapply(info, function(x){
-            x$Yhat_test[i, 1] - x$Yscore 
+            x$Yhat_test[i, 1] - x$Yscore
         })
         Ylo <- do.call(c, Ylo)
         Ylo <- -weightedConformalCutoff(-Ylo, wt, qt[i])
         Yup <- lapply(info, function(x){
-            x$Yhat_test[i, 2] + x$Yscore 
+            x$Yhat_test[i, 2] + x$Yscore
         })
         Yup <- do.call(c, Yup)
         Yup <- weightedConformalCutoff(Yup, wt, qt[i])
