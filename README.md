@@ -17,11 +17,15 @@ if (!require("devtools")){
 }
 devtools::install_github("lihualei71/cfcausal")
 ```
+To access the vignette, run the following code to build it. 
+```
+devtools::install_github("lihualei71/cfcausal", build_vignettes = TRUE)
+```
 
 We suggest installing [grf](https://cran.r-project.org/web/packages/grf/grf.pdf), [randomForest](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf), [gbm](https://cran.r-project.org/web/packages/gbm/gbm.pdf) and [bartMachine](https://cran.r-project.org/web/packages/bartMachine/bartMachine.pdf) to take advantage of the built-in learners. 
 
 ## Usage Examples
-We illustrate the usage of cfcausal package using simple synthetic datasets. For details please read the manual. 
+We illustrate the usage of cfcausal package using simple synthetic datasets. For details please read the vignette (`vignette("cfcausal_demo", package = "cfcausal")`) and the manuals.
 
 ```
 #### Conformal inference of counterfactuals

@@ -1,0 +1,239 @@
+---
+title: "A Tutorial of `cfcausal` package"
+author: "Lihua Lei"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: cfcausal.bib
+vignette: >
+  %\VignetteIndexEntry{Introduction to `adaptMT` package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+The `cfcausal` package implements weighted conformal inference-based procedures for counterfactuals and individual treatment effects proposed in @lei2020conformal and extended in @lei2020weighted. It includes both the weighted split conformal inference described and the weighted cross-validation+ beyond the paper. For each type of conformal inference, both conformalized quantile regression (CQR) and standard conformal inference are supported. It provides a pool of convenient learners and allows flexible user-defined learners for conditional mean and quantiles. In this tutorial we illustrate the usage of `conformalCf` for counterfactual inference and `conformalIte` for inference of individual treatment effects. 
+```{r}
+# Install the "cfcausal" package from github.
+# if (!require("devtools")){
+#     install.packages("devtools")
+# }
+# devtools::install_github("lihualei71/cfcausal")
+library("cfcausal")
+```
+
+# `conformalCf`: inference of counterfactuals
+
+We illustrate the usage of `conformalCf` using the numerical study in Section 3.6 of @lei2020conformal. Here we choose the simplest scenario with $n = 1000, d = 10$, homoscedastic errors and independent covariates. We summarize the data-generating process below.
+
+* The covariates $X_{ij}$ are i.i.d. generated from $\mathbb{Unif}([0, 1])$.
+
+* $Y_{i}(0)\equiv 0$
+
+* $\mathbb{E}[Y_{i}(1) \mid X_{i}] = f(X_{i1})f(X_{i2})$ where
+$$f(x) = \frac{2}{1 + \exp(-12(x - 0.5))}$$
+
+* $Y_{i}(1) = \mathbb{E}[Y_{i}(1) \mid X_{i}] + \epsilon_{i}$
+where $\epsilon_{i}\stackrel{i.i.d.}{\sim}N(0, 1)$. 
+
+* The propensity score $e(x) \triangleq P(T_{i} = 1\mid X_{i} = x)$ is set as follows:
+$$e(x) = \frac{1}{4}(1 + f_{\beta}(x; 2, 4)).$$
+
+The outcome variable `Y` used by `conformalCf` should be a mixture of observed values and missing values while the covariate matrix `X` should have no missing values. It can handle general missing value problems with ignorable missing mechanisms. The inference of counterfactuals under the potential outcome framework with ignorable treatment assignment is thus a special case. 
+
+```{r}
+# Generate data
+set.seed(2020)
+genY <- function(X){
+    2 / (1 + exp(-12 * (X[, 1] - 0.5))) * 2 / (1 + exp(-12 * (X[, 2] - 0.5))) + rnorm(n)
+}
+n <- 1000
+d <- 10
+X <- matrix(runif(n * d), nrow = n, ncol = d)
+Y <- genY(X)
+ps <- (1 + pbeta(X[, 1], 2, 4)) / 4
+T <- as.numeric(ps < runif(n))
+Y[!T] <- NA
+summary(Y)
+```
+
+Let $(X, Y)$ denote a generic observation and $T$ denote the indicator of $Y$ being observed. `conformalCf` can produce intervals with three types of coverage guarantees: 
+
+* when `estimand = "unconditional"`, $\mathbb{P}(Y\in \hat{C}(X))\ge 1 - \alpha$;
+
+* when `estimand = "nonmissing"`, $\mathbb{P}(Y\in \hat{C}(X)\mid T = 1)\ge 1 - \alpha$;
+
+* when `estimand = "missing"`, $\mathbb{P}(Y\in \hat{C}(X)\mid T = 0)\ge 1 - \alpha$.
+
+Throughout the tutorial, we focus on the first type of coverage guarantee. We start by using weighed split conformalized quantile regression (CQR) with the built-in quantile random forest to illustrate the usage. See `?conformal` for a list of built-in learners.
+
+```{r}
+obj <- conformalCf(X, Y, type = "CQR",
+                   quantiles = c(0.05, 0.95),
+                   outfun = "quantRF", useCV = FALSE)
+class(obj)
+```
+
+`obj` is a `conformalSplit` object that is produced by the function `conformal`. See `?conformal` for details. To generate counterfactual intervals, we first generate $5$ testing points. 
+```{r}
+ntest <- 5
+Xtest <- matrix(runif(ntest * d), nrow = ntest, ncol = d)
+```
+
+Then we call the generic `predict` function on `obj` to obtain the intervals. See `?predict.conformalSplit` for details.
+
+```{r}
+CI <- predict(obj, Xtest, alpha = 0.1)
+CI
+```
+
+The output is a data.frame with two columns with `lower` being the lower confidence bound and `upper` being the upper confidence bound. As a sanity check, we generate $10000$ testing points with their outcomes and compute the empirical coverage. As expected the coverage is above $1 - \alpha = 0.9$.
+```{r}
+ntest_large <- 10000
+Xtest_large <- matrix(runif(ntest_large * d), nrow = ntest_large, ncol = d)
+Ytest_large <- genY(Xtest_large)
+CI_large <- predict(obj, Xtest_large, alpha = 0.1)
+mean(CI_large[, 1] <= Ytest_large & CI_large[, 2] >= Ytest_large)
+```
+
+Now we tweak the inputs of `conformalCf`. First we can replace split-CQR with CQR-CV+ to improve the data efficiency by setting `useCV = TRUE`. The default number of folds is `nfolds = 10`. It will be much slower than the split-CQR due to the repeated fitting. 
+```{r}
+obj <- conformalCf(X, Y, type = "CQR",
+                   quantiles = c(0.05, 0.95),
+                   outfun = "quantRF", useCV = TRUE,
+                   nfolds = 10)
+predict(obj, Xtest, alpha = 0.1)
+```
+
+Second, we can replace CQR with the standard conformal inference that calibrates an estimate of conditional mean. In this case, the built-in `"quantRF"` learner should be also be replaced by the built-in `"RF"` learner. See `?conformal` for a list of available learners.
+```{r}
+obj <- conformalCf(X, Y, type = "mean",
+                   quantiles = c(0.05, 0.95),
+                   outfun = "RF", useCV = FALSE)
+predict(obj, Xtest, alpha = 0.1)
+```
+
+Third, `conformalCf` produces two-sided intervals under the default setting. One-sided intervals can be produced by changing the argument `side` to `above` and `below`. In both cases, the argument `quantiles` should be a scalar.
+```{r}
+obj <- conformalCf(X, Y, type = "CQR", side = "above",
+                   quantiles = 0.95,
+                   outfun = "quantRF", useCV = FALSE)
+predict(obj, Xtest, alpha = 0.1)
+obj <- conformalCf(X, Y, type = "CQR", side = "below",
+                   quantiles = 0.05,
+                   outfun = "quantRF", useCV = FALSE)
+predict(obj, Xtest, alpha = 0.1)
+```
+
+Next, we can replace the built-in learners with any user-defined function that satisfies certain minimal requirements. For CQR, `outfun` should have at least four inputs: `Y` for the outcome, `X` for the covariates, `Xtest` for the covariates of testing points and `quantiles` that is either  a vector of length 2 or a scalar, depending on the argument `side`.The output of \code{outfun} must be a matrix with two columns giving the conditional quantile estimates when \code{quantiles} is a vector of length 2; otherwise, it must be a vector giving the conditional quantile estimate.  Here we re-define the quantile random forest from scratch. For this purpose we need to install `grf` package (@grf). 
+
+```{r}
+# Install grf package
+if (!require("grf")){
+    install.packages("grf")
+}
+# User-defined quantile random forest
+quantRF <- function(Y, X, Xtest, quantiles, ...){
+    fit <- grf::quantile_forest(X, Y, quantiles = quantiles, ...)
+    res <- predict(fit, Xtest, quantiles = quantiles)
+    if (length(quantiles) == 1){
+        res <- as.numeric(res)
+    } else {
+        res <- as.matrix(res)
+    }
+    return(res)
+}
+# conformalCf with user-defined quantRF
+obj <- conformalCf(X, Y, type = "CQR",
+                   quantiles = c(0.05, 0.95),
+                   outfun = quantRF, useCV = FALSE)
+predict(obj, Xtest, alpha = 0.1)
+```
+For standard conformal inference, `outfun` should have at least three inputs: `Y` for the outcome, `X` for the covariates, and `Xtest` for the covariates of testing points. The output of \code{outfun} must be a vector giving the conditional quantile estimate. Here we define a linear learner.
+
+```{r}
+linearReg <- function(Y, X, Xtest){
+    X <- as.data.frame(X)
+    Xtest <- as.data.frame(Xtest)
+    data <- data.frame(Y = Y, X)
+    fit <- lm(Y ~ ., data = data)
+    as.numeric(predict(fit, Xtest))
+}
+obj <- conformalCf(X, Y, type = "mean", 
+                   outfun = linearReg, useCV = FALSE)
+predict(obj, Xtest, alpha = 0.1)
+```
+
+Finally, we can replace the built-in propensity score method with any user-defined function that satisfies certain minimal requirements. Specifically `psfun` should have at least three inputs: `Y` for the binary outcome, `X` for the covariates, `Xtest` for the covariates of testing points. The output of \code{psfun} must be a vector of predicted probabilities. Here we define a learner via logistic regression. 
+```{r}
+logitReg <- function(Y, X, Xtest, ...){
+    X <- as.data.frame(X)
+    Xtest <- as.data.frame(Xtest)
+    data <- data.frame(Y = Y, X)
+    fit <- glm(Y ~ ., data = data, family = "binomial", ...)
+    as.numeric(predict(fit, Xtest, type = "response"))
+}
+obj <- conformalCf(X, Y, type = "CQR", quantiles = c(0.05, 0.95),
+                   outfun = "quantRF", psfun = logitReg, useCV = FALSE)
+predict(obj, Xtest, alpha = 0.1)
+```
+
+# `conformalIte`: inference of individual treatment effects
+We illustrate the usage of `conformalCf` using the same numerical example as above except that $Y(0)$ is generated as a standard normal variable. 
+
+```{r}
+# Generate training data
+set.seed(2020)
+genY <- function(X){
+    2 / (1 + exp(-12 * (X[, 1] - 0.5))) * 2 / (1 + exp(-12 * (X[, 2] - 0.5))) + rnorm(n)
+}
+n <- 1000
+d <- 10
+X <- matrix(runif(n * d), nrow = n, ncol = d)
+Y1 <- genY(X)
+Y0 <- rnorm(n)
+ps <- (1 + pbeta(X[, 1], 2, 4)) / 4
+T <- as.numeric(ps < runif(n))
+Y <- ifelse(T == 1, Y1, Y0)
+
+# Generate testing data
+ntest <- 5
+Xtest <- matrix(runif(ntest * d), nrow = ntest, ncol = d)
+pstest <- (1 + pbeta(Xtest[, 1], 2, 4)) / 4
+Ttest <- as.numeric(pstest < runif(ntest))
+Y1test <- genY(Xtest)
+Y0test <- rnorm(ntest)
+Ytest <- ifelse(Ttest == 1, Y1test, Y0test)
+```
+
+`conformalIte` supports four algorithms: the nested approach with exact and inexact calibration for cases with both potential outcomes missing, the naive approach for cases with both potential outcomes missing and the counterfactual inference for cases with only one potential outcome missing. The output of `conformalIte` is a function that outputs the interval estimates on a given dataset. When `algo = "nest"` or `"naive"`, it take a single input `X`; when `algo = "counterfactual"`, it takes three inputs `X`, `Y` and `T`.
+
+```{r}
+# Inexact nested method
+CIfun <- conformalIte(X, Y, T, alpha = 0.1, algo = "nest", exact = FALSE, type = "CQR",
+                      quantiles = c(0.05, 0.95), outfun = "quantRF", useCV = FALSE)
+CIfun(Xtest)
+```
+
+```{r}
+# Exact nested method
+CIfun <- conformalIte(X, Y, T, alpha = 0.1, algo = "nest", exact = TRUE, type = "CQR",
+                      quantiles = c(0.05, 0.95), outfun = "quantRF",  useCV = FALSE)
+CIfun(Xtest)
+```
+
+```{r}
+# naive method
+CIfun <- conformalIte(X, Y, T, alpha = 0.1, algo = "naive", type = "CQR",
+                      quantiles = c(0.05, 0.95), outfun = "quantRF",  useCV = FALSE)
+CIfun(Xtest)
+```
+
+```{r}
+# counterfactual method, Y and T needs to be observed
+CIfun <- conformalIte(X, Y, T, alpha = 0.1, algo = "counterfactual", type = "CQR",
+                      quantiles = c(0.05, 0.95), outfun = "quantRF",  useCV = FALSE)
+CIfun(Xtest, Ytest, Ttest)
+```
+
+# References
