@@ -38,19 +38,19 @@
 #' @param Y interval outcomes. A matrix with two columns.
 #' @param type a string that takes values in \{"CQR", "mean"\}.
 #' @param lofun a function to fit the lower bound, or a valid string. See Details.
-#' @param loquantile the quantile to be fit by \code{lofun}. Only used when \code{type = "CQR"}.
+#' @param loquantile the quantile to be fit by \code{lofun}. Used only when \code{type = "CQR"}.
 #' @param loparams a list of other parameters to be passed into \code{lofun}.
 #' @param upfun a function to fit the upper bound, or a valid string; see Details.
-#' @param upquantile the quantile to be fit by \code{upfun}. Only used when \code{type = "CQR"}.
+#' @param upquantile the quantile to be fit by \code{upfun}. Used only when \code{type = "CQR"}.
 #' @param upparams a list of other parameters to be passed into \code{upfun}.
 #' @param wtfun NULL for unweighted conformal inference, or a function for weighted conformal inference
 #'              when \code{useCV = FALSE}, or a list of functions for weighted conformal inference when \code{useCV = TRUE}.
 #'              See Details.
 #' @param useCV FALSE for split conformal inference and TRUE for CV+.
-#' @param trainprop proportion of units for training \code{outfun}. The default it 75\%. Only used when \code{useCV = FALSE}.
-#' @param trainid indices of training units. The default is NULL, generating random indices. Only used when \code{useCV = FALSE}.
-#' @param nfolds number of folds. The default is 10. Only used when \code{useCV = TRUE}. 
-#' @param idlist a list of indices of length \code{nfolds}. The default is NULL, generating random indices. Only used when \code{useCV = TRUE}.
+#' @param trainprop proportion of units for training \code{outfun}. The default it 75\%. Used only when \code{useCV = FALSE}.
+#' @param trainid indices of training units. The default is NULL, generating random indices. Used only when \code{useCV = FALSE}.
+#' @param nfolds number of folds. The default is 10. Used only when \code{useCV = TRUE}. 
+#' @param idlist a list of indices of length \code{nfolds}. The default is NULL, generating random indices. Used only when \code{useCV = TRUE}.
 #'
 #' @return a \code{conformalIntSplit} object when \code{useCV = FALSE} with the following attributes:
 #' \itemize{

@@ -52,7 +52,7 @@
 #' @param Y outcome vector.
 #' @param type a string that takes values in \{"CQR", "mean"\}.
 #' @param side a string that takes values in \{"two", "above", "below"\}. See Details.
-#' @param quantiles a scalar or a vector of length 2 depending on \code{side}. Only used when \code{type = "CQR"}. See Details. 
+#' @param quantiles a scalar or a vector of length 2 depending on \code{side}. Used only when \code{type = "CQR"}. See Details. 
 #' @param outfun a function that models the conditional mean/quantiles, or a valid string. 
 #'               The default is random forest when \code{type = "mean"} and quantile random forest when
 #'               \code{type = "CQR"}. See Details.
@@ -61,10 +61,10 @@
 #'              when \code{useCV = FALSE}, or a list of functions for weighted conformal inference when \code{useCV = TRUE}.
 #'              See Details.
 #' @param useCV FALSE for split conformal inference and TRUE for CV+.
-#' @param trainprop proportion of units for training \code{outfun}. The default if 75\%. Only used when \code{useCV = FALSE}. 
-#' @param trainid indices of training units. The default is NULL, generating random indices. Only used when \code{useCV = FALSE}.
-#' @param nfolds number of folds. The default is 10. Only used when \code{useCV = TRUE}. 
-#' @param idlist a list of indices of length \code{nfolds}. The default is NULL, generating random indices. Only used when \code{useCV = TRUE}.
+#' @param trainprop proportion of units for training \code{outfun}. The default if 75\%. Used only when \code{useCV = FALSE}. 
+#' @param trainid indices of training units. The default is NULL, generating random indices. Used only when \code{useCV = FALSE}.
+#' @param nfolds number of folds. The default is 10. Used only when \code{useCV = TRUE}. 
+#' @param idlist a list of indices of length \code{nfolds}. The default is NULL, generating random indices. Used only when \code{useCV = TRUE}.
 #'
 #' @return a \code{conformalSplit} object when \code{useCV = FALSE} with the following attributes:
 #' \itemize{

@@ -68,8 +68,8 @@
 #' @param Y outcome vector with missing values encoded as NA. See Details
 #' @param estimand a string that takes values in \{"unconditional", "nonmissing", "missing"\}. See Details.
 #' @param type a string that takes values in \{"CQR", "mean"\}.
-#' @param side a string that takes values in \{"two", "above", "below"\}. The value "two" yields two-sided intervals, the value "above" yields one-sided intervals in the form of \eqn{(-\infty, a(x)]} and the value "below" yields one-sided intervals in the form of \eqn{[a(x), \infty)}.
-#' @param quantiles a scalar or a vector of length 2 depending on \code{side}. Only used when \code{type = "CQR"}. See Details. 
+#' @param side a string that takes values in \{"two", "above", "below"\}. See Details.
+#' @param quantiles a scalar or a vector of length 2 depending on \code{side}. Used only when \code{type = "CQR"}. See Details. 
 #' @param outfun a function that models the conditional mean or quantiles, or a valid string. 
 #'               The default is random forest when \code{type = "mean"} and quantile random forest when
 #'               \code{type = "CQR"}. See Details.
@@ -78,8 +78,8 @@
 #'              The default is "Boosting". See Details. 
 #' @param psparams a list of other parameters to be passed into \code{psfun}.
 #' @param useCV FALSE for split conformal inference and TRUE for CV+.
-#' @param trainprop proportion of units for training \code{outfun}. The default if 75\%. Only used when \code{useCV = FALSE}.
-#' @param nfolds number of folds. The default is 10. Only used when \code{useCV = TRUE}. 
+#' @param trainprop proportion of units for training \code{outfun}. The default if 75\%. Used only when \code{useCV = FALSE}.
+#' @param nfolds number of folds. The default is 10. Used only when \code{useCV = TRUE}. 
 #'
 #' @return a \code{conformalSplit} object when \code{useCV = FALSE} or a \code{conformalCV} object
 #'
