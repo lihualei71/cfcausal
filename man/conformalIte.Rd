@@ -51,7 +51,7 @@ used only when \code{algo = "nest"}.}
 
 \item{side}{a string that is either "two" or "above" or "below". The value "two" yields two-sided intervals, the value "above" yields one-sided intervals in the form of \eqn{(-\infty, a(x)]} and the value "below" yields one-sided intervals in the form of \eqn{[a(x), \infty)}.}
 
-\item{quantiles}{for covariates in the training data; only necessary when \code{type = "CQR"}.}
+\item{quantiles}{for covariates in the training data. Only necessary when \code{type = "CQR"}. See Details.}
 
 \item{outfun}{a function that models the conditional mean or quantiles or a valid string; see Details.
 The default is random forest when \code{type = "mean"} and quantile random forest when
@@ -130,7 +130,9 @@ and the interval for the missing potential outcome.
 When \code{side = "above"},
 intervals are of form [-Inf, a(x)] and when \code{side = "below"} the intervals are of form [a(x), Inf].
 
-\code{outfun} can be a valid string, including
+\code{quantiles}
+
+\code{outfun} is applied to both Y(1) and Y(0). \code{outfun} can be a valid string, including
 \itemize{
 \item "RF" for random forest that predicts the conditional mean, a wrapper built on \code{randomForest} package.
   Used when \code{type = "mean"}.

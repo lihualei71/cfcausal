@@ -156,7 +156,7 @@
 #' wtfun <- function(X){
 #'     pnorm(X[, 1])
 #' }
-#' obj <- conformalInt(X, Y, type = "CQR", quantiles = c(0.05, 0.95),
+#' obj <- conformalInt(X, Y, type = "CQR",
 #'                     lofun = "quantRF", upfun = "quantRF",
 #'                     wtfun = wtfun, useCV = FALSE)
 #' predict(obj, Xtest, alpha = 0.1)
@@ -165,14 +165,14 @@
 #' # Use a list of identical functions
 #' set.seed(1)
 #' wtfun_list <- lapply(1:10, function(i){wtfun})
-#' obj1 <- conformalInt(X, Y, type = "CQR", quantiles = c(0.05, 0.95),
+#' obj1 <- conformalInt(X, Y, type = "CQR", 
 #'                      lofun = "quantRF", upfun = "quantRF",
 #'                      wtfun = wtfun_list, useCV = TRUE)
 #' predict(obj1, Xtest, alpha = 0.1)
 #'
 #' # Use a single function. Equivalent to the above approach
 #' set.seed(1)
-#' obj2 <- conformalInt(X, Y, type = "CQR", quantiles = c(0.05, 0.95),
+#' obj2 <- conformalInt(X, Y, type = "CQR", 
 #'                      lofun = "quantRF", upfun = "quantRF",
 #'                      wtfun = wtfun, useCV = TRUE)
 #' predict(obj2, Xtest, alpha = 0.1)

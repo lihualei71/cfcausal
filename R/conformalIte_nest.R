@@ -22,15 +22,6 @@ conformalIteNest <- function(X, Y, T,
                              trainprop = 0.75,
                              nfolds = 10,
                              wthigh = 20, wtlow = 0.05){
-    ## Check the format
-    type <- type[1]
-    stopifnot(type %in% c("CQR", "mean"))
-    side <- side[1]
-    stopifnot(side %in% c("two", "above", "below"))
-    citype <- citype[1]
-    stopifnot(citype %in% c("CQR", "mean"))
-    ntry <- 10
-
     ## Set default values for functions
     if (is.null(outfun)){
         outfun <- switch(type,
@@ -88,46 +79,9 @@ conformalIteNest <- function(X, Y, T,
     CI_cf <- predict(obj, Xcf, Ycf, Tcf,
                      alpha, wthigh, wtlow)
 
-    ## ## Sign conformal inference
-    ## tausign <- rep(0, nrow(CI_cf))
-    ## tausign[CI_cf[, 1] > 0] <- 1
-    ## tausign[CI_cf[, 2] < 0] <- -1
-    ## tausign <- factor(tausign,
-    ##                   levels = c(-1, 0, 1),
-    ##                   labels = c("neg", "zero", "pos"))
-    ## success <- FALSE
-    ## for (i in 1:ntry){
-    ##     ## use ntry for potentially randomized learners
-    ##     obj <- try(conformalClass(Xcf, tausign, Xtest),
-    ##                silent = TRUE)
-    ##     if (class(obj) != "try-error"){
-    ##         success <- TRUE
-    ##         break
-    ##     }
-    ## }
-    ## if (success){
-    ##     signfun <- function(X){
-    ##         predclass <- predict(obj, alpha = alpha,
-    ##                              wthigh = wthigh, wtlow = wtlow)
-    ##         predclass <- as.data.frame(predclass)
-    ##         names(predclass) <- c("neg", "zero", "pos")
-    ##         predsign <- rep(0, nrow(X))
-    ##         predsign[predclass$pos & !predclass$neg & !predclass$zero] <- 1
-    ##         predsign[predclass$neg & !predclass$pos & !predclass$zero] <- -1
-    ##     }
-    ## } else {
-    ##     ## Report all zeros if it fails for ntry times
-    ##     ## It is likely due to small number of +1/-1
-    ##     ## in tausign
-    ##     signfun <- function(X){
-    ##         predsign <- rep(0, nrow(X))
-    ##     }
-    ##     warning("Sign conformal inference fails! Check the number of positives/negatives detected in CI_cf")
-    ## }
-
     ## Get ITE intervals
-    if (exact){
-        ## Exact intervals
+    if (exact && (side == "two")){
+        ## Exact two-sided intervals
         CIfun <- function(X){
             res <- conformalInt(Xcf, as.matrix(CI_cf),
                                 citype,
@@ -139,8 +93,34 @@ conformalIteNest <- function(X, Y, T,
                                 nfolds, NULL)
             predict(res, X, alpha, wthigh, wtlow)
         }
-    } else {
-        ## Inexact intervals
+    } else if (exact && (side == "above")){
+        ## Exact right-sided intervals
+        CIfun <- function(X){
+            res <- conformal(Xcf, as.numeric(CI_cf[, 2]),
+                             citype, "above", upquantile,
+                             upfun, upparams,
+                             NULL,
+                             useCV,
+                             trainprop, NULL,
+                             nfolds, NULL)
+            upper <- predict(res, X, alpha, wthigh, wtlow)[, 2]
+            data.frame(lower = -Inf, upper = upper)
+        }
+    } else if (exact && (side == "below")){
+        ## Exact left-sided intervals
+        CIfun <- function(X){
+            res <- conformal(Xcf, as.numeric(CI_cf[, 1]),
+                             citype, "below", loquantile,
+                             lofun, loparams,
+                             NULL,
+                             useCV,
+                             trainprop, NULL,
+                             nfolds, NULL)
+            lower <- predict(res, X, alpha, wthigh, wtlow)[, 1]
+            data.frame(lower = lower, upper = Inf)
+        }
+    } else if (!exact && (side == "two")){
+        ## Inexact two-sided intervals
         if (citype == "CQR"){
             loparams <- c(list(Y = CI_cf[, 1], X = Xcf, quantiles = loquantile), loparams)
             upparams <- c(list(Y = CI_cf[, 2], X = Xcf, quantiles = upquantile), upparams)
@@ -151,9 +131,37 @@ conformalIteNest <- function(X, Y, T,
         CIfun <- function(X){
             CI_lo <- do.call(lofun, c(loparams, list(Xtest = X)))
             CI_up <- do.call(upfun, c(upparams, list(Xtest = X)))
-            cbind(CI_lo, CI_up)
+            CI <- data.frame(lower = CI_lo,
+                             upper = CI_up)
+            return(CI)
         }
-    }
+    } else if (!exact && (side == "above")){
+        ## Inexact right-sided intervals
+        if (citype == "CQR"){
+            upparams <- c(list(Y = CI_cf[, 2], X = Xcf, quantiles = upquantile), upparams)
+        } else if (citype == "mean"){
+            upparams <- c(list(Y = CI_cf[, 2], X = Xcf), upparams)
+        }
+        CIfun <- function(X){
+            CI_up <- do.call(upfun, c(upparams, list(Xtest = X)))
+            CI <- data.frame(lower = -Inf,
+                             upper = CI_up)
+            return(CI)
+        }
+    } else if (!exact && (side == "below")){
+        ## Inexact left-sided intervals
+        if (citype == "CQR"){
+            loparams <- c(list(Y = CI_cf[, 1], X = Xcf, quantiles = loquantile), loparams)
+        } else if (citype == "mean"){
+            loparams <- c(list(Y = CI_cf[, 1], X = Xcf), loparams)
+        }
+        CIfun <- function(X){
+            CI_lo <- do.call(lofun, c(loparams, list(Xtest = X)))
+            CI <- data.frame(lower = CI_lo,
+                             upper = Inf)
+            return(CI)
+        }
+    } 
 
     res <- list(CIfun = CIfun,
                 CI_cf = CI_cf, cfid = cfid)

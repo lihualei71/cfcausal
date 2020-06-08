@@ -156,7 +156,7 @@ predict.conformalIntCV <- function(object, Xtest,
         c(Ylo, Yup)
     })
 
-    res <- data.frame(low = as.numeric(CI[1, ]),
-                      high = as.numeric(CI[2, ]))
+    res <- data.frame(lower = as.numeric(CI[1, ]),
+                      upper = as.numeric(CI[2, ]))
     return(res)
 }

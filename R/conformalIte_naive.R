@@ -38,10 +38,15 @@ conformalIteNaive <- function(X, Y, T,
                     two = "two",
                     above = "above",
                     below = "below")
+    if (side == "two"){
+        quantiles1 <- quantiles
+    } else {
+        quantiles1 <- quantiles[2]
+    }
     obj1 <- conformalCf(Xtrain, Y1,
                         estimand1,
                         type, side1,
-                        quantiles,
+                        quantiles1,
                         outfun, outparams,
                         psfun, psparams,
                         useCV,
@@ -57,10 +62,15 @@ conformalIteNaive <- function(X, Y, T,
                     two = "two",
                     above = "below",
                     below = "above")
+    if (side == "two"){
+        quantiles0 <- quantiles
+    } else {
+        quantiles0 <- quantiles[1]
+    }
     obj0 <- conformalCf(Xtrain, Y0,
                         estimand0,
                         type, side0,
-                        quantiles,
+                        quantiles0,
                         outfun, outparams,
                         psfun, psparams,
                         useCV,
@@ -74,8 +84,8 @@ conformalIteNaive <- function(X, Y, T,
     Ite_CIfun <- function(X, alpha, wthigh, wtlow){
         Y1_CI <- Y1_CIfun(X, alpha, wthigh, wtlow)
         Y0_CI <- Y0_CIfun(X, alpha, wthigh, wtlow)
-        cbind(Y1_CI[, 1] - Y0_CI[, 2],
-              Y1_CI[, 2] - Y0_CI[, 1])
+        CI <- data.frame(lower = Y1_CI[, 1] - Y0_CI[, 2],
+                         upper = Y1_CI[, 2] - Y0_CI[, 1])
     }
 
     res <- list(Ite_CIfun = Ite_CIfun,

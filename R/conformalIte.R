@@ -24,8 +24,10 @@
 #'
 #' When \code{side = "above"},
 #' intervals are of form [-Inf, a(x)] and when \code{side = "below"} the intervals are of form [a(x), Inf].
+#'
+#' \code{quantiles}
 #' 
-#' \code{outfun} can be a valid string, including
+#' \code{outfun} is applied to both Y(1) and Y(0). \code{outfun} can be a valid string, including
 #' \itemize{
 #' \item "RF" for random forest that predicts the conditional mean, a wrapper built on \code{randomForest} package.
 #'   Used when \code{type = "mean"}.
@@ -84,7 +86,7 @@
 #' used only when \code{algo = "nest"}.
 #' @param type a string that is either "CQR" or "mean".
 #' @param side a string that is either "two" or "above" or "below". The value "two" yields two-sided intervals, the value "above" yields one-sided intervals in the form of \eqn{(-\infty, a(x)]} and the value "below" yields one-sided intervals in the form of \eqn{[a(x), \infty)}.
-#' @param quantiles for covariates in the training data; only necessary when \code{type = "CQR"}.
+#' @param quantiles for covariates in the training data. Only necessary when \code{type = "CQR"}. See Details.
 #' @param outfun a function that models the conditional mean or quantiles or a valid string; see Details.
 #'               The default is random forest when \code{type = "mean"} and quantile random forest when
 #'               \code{type = "CQR"}.
@@ -189,6 +191,13 @@ conformalIte <- function(X, Y, T,
                          trainprop = 0.75,
                          nfolds = 10,
                          wthigh = 20, wtlow = 0.05){
+    ## Check the format
+    type <- type[1]
+    stopifnot(type %in% c("CQR", "mean"))
+    side <- side[1]
+    stopifnot(side %in% c("two", "above", "below"))
+    citype <- citype[1]
+    stopifnot(citype %in% c("CQR", "mean"))
     algo <- algo[1]
     stopifnot(algo %in% c("nest", "naive", "counterfactual"))
     if (algo == "nest"){

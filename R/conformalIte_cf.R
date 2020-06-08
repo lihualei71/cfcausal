@@ -42,6 +42,8 @@ conformalIteCf <- function(X, Y, T,
         CI[T == 1, 2] <- Y[T == 1] - res$Y0[T == 1, 1]
         CI[T == 0, 1] <- res$Y1[T == 0, 1] - Y[T == 0]
         CI[T == 0, 2] <- res$Y1[T == 0, 2] - Y[T == 0]
+        CI <- as.data.frame(CI)
+        names(CI) <- c("lower", "upper")
         return(CI)
     }
 
