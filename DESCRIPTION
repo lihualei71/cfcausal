@@ -1,7 +1,7 @@
 Package: cfcausal
 Type: Package
 Title: Conformal inference of counterfactuals and individual treatment effects
-Version: 0.1.0.9000
+Version: 0.2.0
 Author: person("Lihua", "Lei", email = "lihualei@stanford.edu", role = c("aut", "cre"))
 Maintainer: Lihua Lei <lihualei@stanford.edu>
 Description: Implementation of weighted conformal inference for counterfactuals and individual treatment effects, including both split conformal inference and cross-valiation+ (CV+).
