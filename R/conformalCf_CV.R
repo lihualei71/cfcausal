@@ -1,16 +1,11 @@
 ## CV+ for counterfactuals. See ?conformalCf
 conformalCf_CV <- function(X, Y,
-                           estimand = c("unconditional",
-                                        "nonmissing",
-                                        "missing"),
-                           type = c("CQR", "mean"),
-                           side = c("two", "above", "below"),
-                           quantiles = NULL,
-                           outfun = NULL,
-                           outparams = list(),
-                           psfun = NULL,
-                           psparams = list(),
-                           nfolds = 10){
+                           estimand,
+                           type, side,
+                           quantiles,
+                           outfun, outparams,
+                           psfun, psparams,
+                           nfolds){
     T <- as.numeric(!is.na(Y))
     inds1 <- which(T == 1)
     inds0 <- which(T == 0)

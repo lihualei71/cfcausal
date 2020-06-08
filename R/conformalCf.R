@@ -186,11 +186,27 @@ conformalCf <- function(X, Y,
                         useCV = FALSE,
                         trainprop = 0.75,
                         nfolds = 10){
+    type <- type[1]
+    stopifnot(type %in% c("CQR", "mean"))
+    side <- side[1]
+    stopifnot(side %in% c("two", "above", "below"))
     estimand <- estimand[1]
     stopifnot(estimand %in% c("unconditional",
                               "nonmissing",
                               "missing"))
 
+    if (is.null(outfun)){
+        outfun <- switch(type,
+                         CQR = quantRF,
+                         mean = RF)
+    } else if (is.character(outfun)){
+        outfun <- str_outfun(outfun[1])
+    } else if (is.function(outfun)){
+        check_outfun(outfun, type)
+    } else {
+        stop("outfun must be NULL or a string or a function")
+    }
+    
     if (is.null(psfun)){
         psfun <- Boosting
     } else if (is.character(psfun)){

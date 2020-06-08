@@ -199,6 +199,53 @@ conformalIte <- function(X, Y, T,
     stopifnot(citype %in% c("CQR", "mean"))
     algo <- algo[1]
     stopifnot(algo %in% c("nest", "naive", "counterfactual"))
+
+    if (is.null(outfun)){
+        outfun <- switch(type,
+                         CQR = quantRF,
+                         mean = RF)
+    } else if (is.character(outfun)){
+        outfun <- str_outfun(outfun[1])
+    } else if (is.function(outfun)){
+        check_outfun(outfun, type)
+    } else {
+        stop("outfun must be NULL or a string or a function")
+    }
+    
+    if (is.null(psfun)){
+        psfun <- Boosting
+    } else if (is.character(psfun)){
+        psfun <- str_psfun(psfun[1])
+    } else if (is.function(psfun)){
+        check_psfun(psfun)
+    } else {
+        stop("psfun must be NULL or a string or a function")
+    }
+
+    if (is.null(lofun)){
+        lofun <- switch(type,
+                        CQR = quantRF,
+                        mean = RF)
+    } else if (is.character(lofun)){
+        outfun <- str_outfun(lofun[1])
+    } else if (is.function(lofun)){
+        check_outfun(lofun, type)
+    } else {
+        stop("lofun must be NULL or a string or a function")
+    }
+
+    if (is.null(upfun)){
+        upfun <- switch(type,
+                        CQR = quantRF,
+                        mean = RF)
+    } else if (is.character(upfun)){
+        outfun <- str_outfun(upfun[1])
+    } else if (is.function(upfun)){
+        check_outfun(upfun, type)
+    } else {
+        stop("upfun must be NULL or a string or a function")
+    }    
+    
     if (algo == "nest"){
         obj <- conformalIteNest(X, Y, T,
                                 alpha,

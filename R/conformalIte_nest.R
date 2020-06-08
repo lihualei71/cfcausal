@@ -1,47 +1,20 @@
 ## Nested methods of Conformal inference for individual treatment effects for subjects with both
 ## missing potential outcome. See ?conformalIte
 conformalIteNest <- function(X, Y, T,
-                             alpha = 0.1,
-                             type = c("CQR", "mean"),
-                             side = c("two", "above", "below"),
-                             quantiles = NULL,
-                             outfun = NULL,
-                             outparams = list(),
-                             psfun = NULL,
-                             psparams = list(),
-                             exact = FALSE,
-                             cfprop = 0.5,
-                             citype = c("CQR", "mean"),
-                             lofun = NULL,
-                             loquantile = 0.5,
-                             loparams = list(),
-                             upfun = NULL,
-                             upquantile = 0.5,
-                             upparams = list(),
-                             useCV = FALSE,
-                             trainprop = 0.75,
-                             nfolds = 10,
-                             wthigh = 20, wtlow = 0.05){
-    ## Set default values for functions
-    if (is.null(outfun)){
-        outfun <- switch(type,
-                         CQR = quantRF,
-                         mean = RF)
-    }
-    if (is.null(psfun)){
-        psfun <- Boosting
-    }
-    if (is.null(lofun)){
-        lofun <- switch(citype,
-                        CQR = quantRF,
-                        mean = RF)
-    }
-    if (is.null(upfun)){
-        upfun <- switch(citype,
-                        CQR = quantRF,
-                        mean = RF)
-    }
-
+                             alpha,
+                             type, side,
+                             quantiles,
+                             outfun, outparams,
+                             psfun, psparams,
+                             exact,
+                             cfprop,
+                             citype,
+                             lofun, loquantile, loparams,
+                             upfun, upquantile, upparams,
+                             useCV,
+                             trainprop,
+                             nfolds,
+                             wthigh, wtlow){
     ## Reset effective alpha based on exact
     if (exact){
         alpha <- alpha / 2

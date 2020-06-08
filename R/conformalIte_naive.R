@@ -1,30 +1,13 @@
 ## Naive methods of Conformal inference for individual treatment effects for subjects with both
 ## missing potential outcome. See ?conformalIte
 conformalIteNaive <- function(X, Y, T,
-                              type = c("CQR", "mean"),
-                              side = c("two", "above", "below"),
-                              quantiles = NULL,
-                              outfun = NULL,
-                              outparams = list(),
-                              psfun = NULL,
-                              psparams = list(),
-                              useCV = FALSE,
-                              trainprop = 0.75,
-                              nfolds = 10){
-    type <- type[1]
-    stopifnot(type %in% c("CQR", "mean"))
-    side <- side[1]
-    stopifnot(side %in% c("two", "above", "below"))
-
-    if (is.null(outfun)){
-        outfun <- switch(type,
-                         CQR = quantRF,
-                         mean = RF)
-    }
-    if (is.null(psfun)){
-        psfun <- Boosting
-    }
-
+                              type, side,
+                              quantiles,
+                              outfun, outparams,
+                              psfun, psparams,
+                              useCV,
+                              trainprop,
+                              nfolds){
     n <- length(Y)
 
     Y1 <- Y0 <- Y
