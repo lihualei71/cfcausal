@@ -49,18 +49,18 @@ used only when \code{algo = "nest"}.}
 
 \item{type}{a string that is either "CQR" or "mean".}
 
-\item{side}{a string that is either "two" or "above" or "below".}
+\item{side}{a string that is either "two" or "above" or "below". The value "two" yields two-sided intervals, the value "above" yields one-sided intervals in the form of \eqn{(-\infty, a(x)]} and the value "below" yields one-sided intervals in the form of \eqn{[a(x), \infty)}.}
 
 \item{quantiles}{for covariates in the training data; only necessary when \code{type = "CQR"}.}
 
-\item{outfun}{a function that models the conditional mean or quantiles or a valid string; see \code{\link{conformal}}.
-Default to be random forest when \code{type = "mean"} and quantile random forest when
+\item{outfun}{a function that models the conditional mean or quantiles or a valid string; see Details.
+The default is random forest when \code{type = "mean"} and quantile random forest when
 \code{type = "CQR"}.}
 
 \item{outparams}{a list of other parameters to be passed into \code{outfun}.}
 
 \item{psfun}{a function that models the missing mechanism (probability of missing given X); see Details.
-Default to be gradient boosting.}
+The default is "Boosting".}
 
 \item{psparams}{a list of other parameters to be passed into \code{psfun}.}
 
@@ -70,18 +70,18 @@ Default to be gradient boosting.}
 \item{citype}{the type of interval conformal inference used in the nested approach with exact calibration;
 used only when \code{algo = "nest"} and \code{exact = TRUE}.}
 
-\item{lofun}{the function to fit the lower bound or a valid string; see \code{\link{conformalInt}}; used only when
+\item{lofun}{the function to fit the lower bound or a valid string; see Details; used only when
 \code{algo = "nest"}.}
 
-\item{loquantile}{the quantile to fit for \code{lofun}; see \code{\link{conformalInt}}; used only when
+\item{loquantile}{the quantile to fit for \code{lofun}; see Details; used only when
 \code{algo = "nest"}, \code{exact = TRUE} and \code{citype = "CQR"}.}
 
 \item{loparams}{a list of other parameters to be passed into \code{lofun}.}
 
-\item{upfun}{the function to fit the upper bound or a valid string; see \code{\link{conformalInt}}; used only when
+\item{upfun}{the function to fit the upper bound or a valid string; see Details; used only when
 \code{algo = "nest"}.}
 
-\item{upquantile}{the quantile to fit for \code{upfun}; see \code{\link{conformalInt}}; used only when
+\item{upquantile}{the quantile to fit for \code{upfun}; see Details; used only when
 \code{algo = "nest"}, \code{exact = TRUE} and \code{citype = "CQR"}.}
 
 \item{upparams}{a list of other parameters to be passed into \code{upfun}.}
@@ -104,29 +104,81 @@ a single input \code{X}; when \code{algo = "counterfactual"}, it takes three inp
 \code{\link{conformal}}, \code{\link{conformalInt}}, \code{\link{conformalCf}}
 }
 \description{
-\code{conformalIte} supports four algorithms: the nested approach, with exact and inexact
-calibration, and the naive approach for cases with both potential outcomes missing and the counterfactual
+\code{conformalIte} supports four algorithms: the nested approach with exact and inexact
+calibration for cases with both potential outcomes missing, the naive approach for cases with both potential outcomes missing and the counterfactual
 inference for cases with only one potential outcome missing. For each algorithm, it supports both
 split conformal inference and CV+, including weighted Jackknife+ as a special case. For each type, it
-supports both conformalized quantile regression (CQR) and standard conformal inference based on mean regression.
+supports both conformalized quantile regression (CQR) and standard conformal inference based on conditional mean regression.
 }
 \details{
 The algorithm to be used is controlled by \code{algo} and \code{exact}:
 \itemize{
 \item (Default) when \code{algo = "nest"} and \code{exact = FALSE}, the inexact nested approach is used. It
-first split the data into two folds, with the second fold including \code{cfprop} fraction of units. Then it applies
+first splits the data into two folds, with the second fold including \code{cfprop} fraction of units. Then it applies
 \code{conformalCf} on the first fold to compute counterfactual intervals on the second fold, which further yields
-interval estimates of ITE \eqn{\hat{C}(X_i)}. It then fits \eqn{\hat{C}^{L}(X_i)} and \eqn{\hat{C}^{R}(X_i)} on \eqn{X_i}'s
-\item When \code{algo = "nest"} and \code{exact = TRUE}, the exact nested approach is used. It has the same step to produce
-ITE intervals \eqn{\hat{C}(X_i)}'s on the second fold but then applies \code{\link{conformalInt}} to calibrate them
+interval estimates of ITE \eqn{\hat{C}(X_i)}. Finally it fits \eqn{\hat{C}^{L}(X_i)} and \eqn{\hat{C}^{R}(X_i)} on \eqn{X_i}'s.
+\item When \code{algo = "nest"} and \code{exact = TRUE}, the exact nested approach is used. It has the same steps as the inexact nested approach to produce
+ITE intervals \eqn{\hat{C}(X_i)}'s on the second fold but then applies \code{\link{conformalInt}} to calibrate them.
 \item When \code{algo = "naive"}, the naive approach is used. It applies \code{\link{conformalCf}} on the data and
-produce counterfactual intervals for both Y(1) and Y(0). The ITE intervals are computed by contrasting two counterfactual
-intervals.
+produce counterfactual intervals for both Y(1) and Y(0). The ITE intervals are computed by contrasting two counterfactual intervals.
 \item When \code{algo = "counterfactual"}, it handles the case where the treatment assignments and the observed outcome are
 both available for each testing point. As with the naive approach, it applies \code{\link{conformalCf}} on the data and
-produce counterfactual intervals for both Y(1) and Y(0). The ITE intervals are computed by contrasting the observed outcome
+produce counterfactual intervals for both Y(1) and Y(0). The ITE intervals are then computed by contrasting the observed outcome
 and the interval for the missing potential outcome.
 }
+
+When \code{side = "above"},
+intervals are of form [-Inf, a(x)] and when \code{side = "below"} the intervals are of form [a(x), Inf].
+
+\code{outfun} can be a valid string, including
+\itemize{
+\item "RF" for random forest that predicts the conditional mean, a wrapper built on \code{randomForest} package.
+  Used when \code{type = "mean"}.
+\item "quantRF" for quantile random forest that predicts the conditional quantiles, a wrapper built on
+  \code{grf} package. Used when \code{type = "CQR"}.
+\item "Boosting" for gradient boosting that predicts the conditional mean, a wrapper built on \code{gbm}
+   package. Used when \code{type = "mean"}.
+\item "quantBoosting" for quantile gradient boosting that predicts the conditional quantiles, a wrapper built on
+  \code{gbm} package. Used when \code{type = "CQR"}.
+\item "BART" for gradient boosting that predicts the conditional mean, a wrapper built on \code{bartMachine}
+   package. Used when \code{type = "mean"}.
+\item "quantBART" for quantile gradient boosting that predicts the conditional quantiles, a wrapper built on
+  \code{bartMachine} package. Used when \code{type = "CQR"}.
+}
+or a function object whose input must include, but not limited to
+\itemize{
+\item \code{Y} for outcome in the training data.
+\item \code{X} for covariates in the training data.
+\item \code{Xtest} for covariates in the testing data.
+}
+When \code{type = "CQR"}, \code{outfun} should also include an argument \code{quantiles} that is either
+a vector of length 2 or a scalar, depending on the argument \code{side}. The output of \code{outfun}
+must be a matrix with two columns giving the conditional quantile estimates when \code{quantiles} is
+a vector of length 2; otherwise, it must be a vector giving the conditional quantile estimate or
+conditional mean estimate. Other optional arguments can be passed into \code{outfun} through \code{outparams}.
+
+\code{lofun} and \code{upfun} have the same forms as \code{outfun} except that the input \code{quantiles}
+must be scalar when \code{citype = "CQR"}, instead of a vector of 2, because only one conditional quantile
+is fitted. The argument \code{loquantile} is used for \code{lofun} and the argument \code{hiquantile} is used
+for \code{upfun}. Moreover, the output must be a vector giving the conditional quantile estimate or conditional mean
+estimate. Other optional arguments can be passed into \code{lofun} through \code{loparams} and \code{upfun}
+through \code{upparams}.
+
+\code{psfun} can be a valid string, including
+\itemize{
+\item "RF" for random forest that predicts the propensity score, a wrapper built on \code{randomForest} package.
+  Used when \code{type = "mean"}.
+\item "Boosting" for gradient boosting that predicts the propensity score, a wrapper built on \code{gbm}
+   package. Used when \code{type = "mean"}.
+}
+or a function object whose input must include, but not limited to
+\itemize{
+\item \code{Y} for treatment assignment, a binary vector, in the training data.
+\item \code{X} for covariates in the training data.
+\item \code{Xtest} for covariates in the testing data.
+}
+The output of \code{psfun} must be a vector of predicted probabilities. Other optional arguments
+can be passed into \code{psfun} through \code{psparams}.
 }
 \examples{
 \donttest{# Generate potential outcomes from two linear models

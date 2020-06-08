@@ -11,23 +11,6 @@ conformalCf_split <- function(X, Y,
                               psfun = NULL,
                               psparams = list(),
                               trainprop = 0.75){
-    estimand <- estimand[1]
-    stopifnot(estimand %in% c("unconditional",
-                              "nonmissing",
-                              "missing"))
-    type <- type[1]
-    stopifnot(type %in% c("CQR", "mean"))
-    side <- side[1]
-    stopifnot(side %in% c("two", "above", "below"))
-    if (is.null(outfun)){
-        outfun <- switch(type,
-                         CQR = quantRF,
-                         mean = RF)
-    }
-    if (is.null(psfun)){
-        psfun <- Boosting
-    }
-
     T <- as.numeric(!is.na(Y))
     inds1 <- which(T == 1)
     inds0 <- which(T == 0)

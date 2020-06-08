@@ -2,7 +2,7 @@
 % Please edit documentation in R/conformalCf.R
 \name{conformalCf}
 \alias{conformalCf}
-\title{Conformal counterfactual inference}
+\title{Conformal inference for counterfactuals}
 \usage{
 conformalCf(
   X,
@@ -23,42 +23,41 @@ conformalCf(
 \arguments{
 \item{X}{covariates.}
 
-\item{Y}{outcome with missing values encoded as NA; see Details}
+\item{Y}{outcome vector with missing values encoded as NA. See Details}
 
-\item{estimand}{a string that is either "unconditional" or "nonmissing" or "missing"; see Details.}
+\item{estimand}{a string that takes values in \{"unconditional", "nonmissing", "missing"\}. See Details.}
 
-\item{type}{a string that is either "CQR" or "mean".}
+\item{type}{a string that takes values in \{"CQR", "mean"\}.}
 
-\item{side}{a string that is either "two" or "above" or "below".}
+\item{side}{a string that takes values in \{"two", "above", "below"\}. The value "two" yields two-sided intervals, the value "above" yields one-sided intervals in the form of \eqn{(-\infty, a(x)]} and the value "below" yields one-sided intervals in the form of \eqn{[a(x), \infty)}.}
 
-\item{quantiles}{for covariates in the training data; only necessary when \code{type = "CQR"}.}
+\item{quantiles}{a scalar or a vector of length 2 depending on \code{side}. Only used when \code{type = "CQR"}. See Details.}
 
-\item{outfun}{a function that models the conditional mean or quantiles or a valid string; see Details.
-Default to be random forest when \code{type = "mean"} and quantile random forest when
-\code{type = "CQR"}.}
+\item{outfun}{a function that models the conditional mean or quantiles, or a valid string. 
+The default is random forest when \code{type = "mean"} and quantile random forest when
+\code{type = "CQR"}. See Details.}
 
 \item{outparams}{a list of other parameters to be passed into \code{outfun}.}
 
-\item{psfun}{a function that models the missing mechanism (probability of missing given X); see Details.
-Default to be gradient boosting.}
+\item{psfun}{a function that models the missing mechanism (probability of missing given X), or a valid string.
+The default is "Boosting". See Details.}
 
 \item{psparams}{a list of other parameters to be passed into \code{psfun}.}
 
 \item{useCV}{FALSE for split conformal inference and TRUE for CV+.}
 
-\item{trainprop}{proportion of units for training \code{outfun}.}
+\item{trainprop}{proportion of units for training \code{outfun}. The default if 75\%. Only used when \code{useCV = FALSE}.}
 
-\item{nfolds}{number of folds; 10 by default.}
+\item{nfolds}{number of folds. The default is 10. Only used when \code{useCV = TRUE}.}
 }
 \value{
 a \code{conformalSplit} object when \code{useCV = FALSE} or a \code{conformalCV} object
-when \code{useCV = TRUE}. See \code{\link{conformal}} for details.
 }
 \description{
-\code{conformalCf} computes intervals for counterfactuals or outcome with missing values in general.
+\code{conformalCf} computes intervals for counterfactuals or outcomes with ignorable missing values in general.
 It supports both split conformal inference and CV+,
 including weighted Jackknife+ as a special case. For each type, it supports both conformalized
-quantile regression (CQR) and standard conformal inference based on mean regression.
+quantile regression (CQR) and standard conformal inference based on conditional mean regression.
 }
 \details{
 The outcome \code{Y} must comprise both observed values and missing values encoded as NA.
@@ -66,13 +65,59 @@ The missing values are used to estimate the propensity score \eqn{P(missing | X)
 
 \code{estimand} controls the type of coverage to be guaranteed:
 \itemize{
-\item (default) when \code{estimand = "unconditional"}, the interval has
-\eqn{P(Y \in \hat{C}(X))\ge 1 - \alpha};
-\item when \code{estimand = "nonmissing"}, the interval has
-\eqn{P(Y \in \hat{C}(X) | nonmissing) \ge 1 - \alpha};
-\item when \code{estimand = "missing"}, the interval has
+\item (Default) when \code{estimand = "unconditional"}, the interval has
+\eqn{P(Y \in \hat{C}(X))\ge 1 - \alpha}.
+\item When \code{estimand = "nonmissing"}, the interval has
+\eqn{P(Y \in \hat{C}(X) | nonmissing) \ge 1 - \alpha}.
+\item When \code{estimand = "missing"}, the interval has
 \eqn{P(Y \in \hat{C}(X) | missing) \ge 1 - \alpha}.
 }
+
+When \code{side = "above"},
+intervals are of form [-Inf, a(x)] and when \code{side = "below"} the intervals are of form [a(x), Inf].
+
+\code{outfun} can be a valid string, including
+\itemize{
+\item "RF" for random forest that predicts the conditional mean, a wrapper built on \code{randomForest} package.
+  Used when \code{type = "mean"}.
+\item "quantRF" for quantile random forest that predicts the conditional quantiles, a wrapper built on
+  \code{grf} package. Used when \code{type = "CQR"}.
+\item "Boosting" for gradient boosting that predicts the conditional mean, a wrapper built on \code{gbm}
+   package. Used when \code{type = "mean"}.
+\item "quantBoosting" for quantile gradient boosting that predicts the conditional quantiles, a wrapper built on
+  \code{gbm} package. Used when \code{type = "CQR"}.
+\item "BART" for gradient boosting that predicts the conditional mean, a wrapper built on \code{bartMachine}
+   package. Used when \code{type = "mean"}.
+\item "quantBART" for quantile gradient boosting that predicts the conditional quantiles, a wrapper built on
+  \code{bartMachine} package. Used when \code{type = "CQR"}.
+}
+or a function object whose input must include, but not limited to
+\itemize{
+\item \code{Y} for outcome in the training data.
+\item \code{X} for covariates in the training data.
+\item \code{Xtest} for covariates in the testing data.
+}
+When \code{type = "CQR"}, \code{outfun} should also include an argument \code{quantiles} that is either
+a vector of length 2 or a scalar, depending on the argument \code{side}. The output of \code{outfun}
+must be a matrix with two columns giving the conditional quantile estimates when \code{quantiles} is
+a vector of length 2; otherwise, it must be a vector giving the conditional quantile estimate or
+conditional mean estimate. Other optional arguments can be passed into \code{outfun} through \code{outparams}.
+
+\code{psfun} can be a valid string, including
+\itemize{
+\item "RF" for random forest that predicts the propensity score, a wrapper built on \code{randomForest} package.
+  Used when \code{type = "mean"}.
+\item "Boosting" for gradient boosting that predicts the propensity score, a wrapper built on \code{gbm}
+   package. Used when \code{type = "mean"}.
+}
+or a function object whose input must include, but not limited to
+\itemize{
+\item \code{Y} for treatment assignment, a binary vector, in the training data.
+\item \code{X} for covariates in the training data.
+\item \code{Xtest} for covariates in the testing data.
+}
+The output of \code{psfun} must be a vector of predicted probabilities. Other optional arguments
+can be passed into \code{psfun} through \code{psparams}.
 }
 \examples{
 \donttest{# Generate data from a linear model
@@ -98,9 +143,17 @@ obj <- conformalCf(X, Y, type = "CQR", quantiles = c(0.05, 0.95),
 predict(obj, Xtest, alpha = 0.1)
 
 # Run weighted standard conformal inference
-obj <- conformalCf(X, Y, type = "mean", quantiles = c(0.05, 0.95),
+obj <- conformalCf(X, Y, type = "mean",
                    outfun = "RF", useCV = FALSE)
 predict(obj, Xtest, alpha = 0.1)
+
+# Run one-sided weighted split CQR
+obj1 <- conformalCf(X, Y, type = "CQR", side = "above",
+                    quantiles = 0.95, outfun = "quantRF", useCV = FALSE)
+predict(obj1, Xtest, alpha = 0.1)
+obj2 <- conformalCf(X, Y, type = "CQR", side = "below",
+                    quantiles = 0.05, outfun = "quantRF", useCV = FALSE)
+predict(obj2, Xtest, alpha = 0.1)
 
 # Run split CQR with a self-defined quantile random forest
 # Y, X, Xtest, quantiles should be included in the inputs
@@ -121,15 +174,35 @@ predict(obj, Xtest, alpha = 0.1)
 # Run standard split conformal inference with a self-defined linear regression
 # Y, X, Xtest should be included in the inputs
 linearReg <- function(Y, X, Xtest){
+    X <- as.data.frame(X)
+    Xtest <- as.data.frame(Xtest)
     data <- data.frame(Y = Y, X)
     fit <- lm(Y ~ ., data = data)
     as.numeric(predict(fit, Xtest))
 }
-X <- as.data.frame(X)
-Xtest <- as.data.frame(Xtest)
-obj <- conformalCf(X, Y, type = "mean", quantiles = c(0.05, 0.95),
+obj <- conformalCf(X, Y, type = "mean",
                    outfun = linearReg, useCV = FALSE)
 predict(obj, Xtest, alpha = 0.1)
+
+# Run split CQR with a built-in psfun
+# Y, X, Xtest, should be included in the inputs
+obj <- conformalCf(X, Y, type = "CQR", quantiles = c(0.05, 0.95),
+                   outfun = "quantRF", psfun = "RF", useCV = FALSE)
+predict(obj, Xtest, alpha = 0.1)
+
+# Run split CQR with a self-defined function to estimate propensity scores
+# Y, X, Xtest, should be included in the inputs
+logitReg <- function(Y, X, Xtest, ...){
+    X <- as.data.frame(X)
+    Xtest <- as.data.frame(Xtest)
+    data <- data.frame(Y = Y, X)
+    fit <- glm(Y ~ ., data = data, family = "binomial", ...)
+    as.numeric(predict(fit, Xtest, type = "response"))
+}
+obj <- conformalCf(X, Y, type = "CQR", quantiles = c(0.05, 0.95),
+                   outfun = "quantRF", psfun = logitReg, useCV = FALSE)
+predict(obj, Xtest, alpha = 0.1)
+
 }
 }
 \seealso{

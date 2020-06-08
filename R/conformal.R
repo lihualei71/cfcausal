@@ -1,11 +1,11 @@
-#' Generic Conformal inference
+#' Conformal inference for continuous outcomes
 #'
-#' \code{conformal} is a framework for weighted and unweighted conformal inference with continuous
+#' \code{conformal} is a framework for weighted and unweighted conformal inference for continuous
 #' outcomes. It supports both weighted split conformal inference and weighted CV+,
 #' including weighted Jackknife+ as a special case. For each type, it supports both conformalized
-#' quantile regression (CQR) and standard conformal inference based on mean regression.
+#' quantile regression (CQR) and standard conformal inference based on conditional mean estimation.
 #'
-#'  @details When \code{side = "two"}, CQR produces intervals in the form of
+#' @details When \code{side = "two"}, CQR (two-sided) produces intervals in the form of
 #' \deqn{[q_{\alpha_{lo}}(x) - \eta, q_{\alpha_{hi}}(x) + \eta]}
 #' where \eqn{q_{\alpha_{lo}}(x)} and \eqn{q_{\alpha_{hi}}(x)} are estimates of conditional
 #' quantiles of Y given X and the standard conformal inference produces (two-sided) intervals in the form of
@@ -19,52 +19,52 @@
 #'
 #' \code{outfun} can be a valid string, including
 #' \itemize{
-#' \item "RF" for random forest that predicts the conditional mean, a wrapper from \code{randomForest} package.
-#'   Used when \code{type = "mean"};
-#' \item "quantRF" for quantile random forest that predicts the conditional quantiles, a wrapper from
-#'   \code{grf} package. Used when \code{type = "CQR"};
-#' \item "Boosting" for gradient boosting that predicts the conditional mean, a wrapper from \code{gbm}
-#'    package. Used when \code{type = "mean"};
-#' \item "quantBoosting" for quantile gradient boosting that predicts the conditional quantiles, a wrapper from
-#'   \code{gbm} package. Used when \code{type = "CQR"};
-#' \item "BART" for gradient boosting that predicts the conditional mean, a wrapper from \code{bartMachine}
-#'    package. Used when \code{type = "mean"};
-#' \item "quantBART" for quantile gradient boosting that predicts the conditional quantiles, a wrapper from
-#'   \code{bartMachine} package. Used when \code{type = "CQR"};
+#' \item "RF" for random forest that predicts the conditional mean, a wrapper built on \code{randomForest} package.
+#'   Used when \code{type = "mean"}.
+#' \item "quantRF" for quantile random forest that predicts the conditional quantiles, a wrapper built on
+#'   \code{grf} package. Used when \code{type = "CQR"}.
+#' \item "Boosting" for gradient boosting that predicts the conditional mean, a wrapper built on \code{gbm}
+#'    package. Used when \code{type = "mean"}.
+#' \item "quantBoosting" for quantile gradient boosting that predicts the conditional quantiles, a wrapper built on
+#'   \code{gbm} package. Used when \code{type = "CQR"}.
+#' \item "BART" for gradient boosting that predicts the conditional mean, a wrapper built on \code{bartMachine}
+#'    package. Used when \code{type = "mean"}.
+#' \item "quantBART" for quantile gradient boosting that predicts the conditional quantiles, a wrapper built on
+#'   \code{bartMachine} package. Used when \code{type = "CQR"}.
 #' }
 #'
 #' or a function object whose input must include, but not limited to
 #' \itemize{
-#' \item \code{Y} for outcome in the training data;
-#' \item \code{X} for covariates in the training data;
+#' \item \code{Y} for outcome in the training data.
+#' \item \code{X} for covariates in the training data.
 #' \item \code{Xtest} for covariates in the testing data.
 #' }
 #' When \code{type = "CQR"}, \code{outfun} should also include an argument \code{quantiles} that is either
-#' a vector of length 2 or a scalar, depending on the argument \code{side}. Other optional arguments can be
+#' a vector of length 2 or a scalar, depending on the argument \code{side}. The output of \code{outfun} must be a matrix with two columns giving the conditional quantile estimates when \code{quantiles} is a vector of length 2; otherwise, it must be a vector giving the conditional quantile estimate or conditional mean estimate. Other optional arguments can be
 #' passed into \code{outfun} through \code{outparams}.
 #'
 #' \code{wtfun} is NULL for unweighted conformal inference. For weighted split conformal inference, it is a
-#' function with required input \code{X} that produces a vector of numeric values in [0, 1] of length \code{nrow(X)}.
+#' function with a required input \code{X} that produces a vector of non-negative reals of length \code{nrow(X)}.
 #' For weighted CV+, it can be a function as in the case \code{useCV = FALSE} so that the same function will
-#' apply to each fold or a list of functions of length \code{nfolds} so that \code{wtfun[[k]]} is applied to fold \code{k}.
+#' apply to each fold, or a list of functions of length \code{nfolds} so that \code{wtfun[[k]]} is applied to fold \code{k}.
 #'
 #' @param X covariates.
-#' @param Y outcome.
-#' @param type a string that is either "CQR" or "mean".
-#' @param side a string that is either "two" or "above" or "below".
-#' @param quantiles for covariates in the training data; only necessary when \code{type = "CQR"}.
-#' @param outfun a function that models the conditional mean or quantiles or a valid string; see Details.
-#'               Default to be random forest when \code{type = "mean"} and quantile random forest when
-#'               \code{type = "CQR"}.
+#' @param Y outcome vector.
+#' @param type a string that takes values in \{"CQR", "mean"\}.
+#' @param side a string that takes values in \{"two", "above", "below"\}. See Details.
+#' @param quantiles a scalar or a vector of length 2 depending on \code{side}. Only used when \code{type = "CQR"}. See Details. 
+#' @param outfun a function that models the conditional mean/quantiles, or a valid string. 
+#'               The default is random forest when \code{type = "mean"} and quantile random forest when
+#'               \code{type = "CQR"}. See Details.
 #' @param outparams a list of other parameters to be passed into \code{outfun}.
-#' @param wtfun NULL for unweighted conformal inference or a function for weighted conformal inference
-#'              when \code{useCV = FALSE} and a list of functions for weighted conformal inference when \code{useCV = TRUE};
-#'              see Details.
+#' @param wtfun NULL for unweighted conformal inference, or a function for weighted conformal inference
+#'              when \code{useCV = FALSE}, or a list of functions for weighted conformal inference when \code{useCV = TRUE}.
+#'              See Details.
 #' @param useCV FALSE for split conformal inference and TRUE for CV+.
-#' @param trainprop proportion of units for training \code{outfun}.
-#' @param trainid indices of training units; NULL by default and indices will be randomly sampled.
-#' @param nfolds number of folds; 10 by default.
-#' @param idlist list of indices of length \code{nfolds}; NULL by default and indices will be randomly sampled.
+#' @param trainprop proportion of units for training \code{outfun}. The default if 75\%. Only used when \code{useCV = FALSE}. 
+#' @param trainid indices of training units. The default is NULL, generating random indices. Only used when \code{useCV = FALSE}.
+#' @param nfolds number of folds. The default is 10. Only used when \code{useCV = TRUE}. 
+#' @param idlist a list of indices of length \code{nfolds}. The default is NULL, generating random indices. Only used when \code{useCV = TRUE}.
 #'
 #' @return a \code{conformalSplit} object when \code{useCV = FALSE} with the following attributes:
 #' \itemize{
@@ -147,16 +147,39 @@
 #' # Run unweighted standard split conformal inference with a self-defined linear regression
 #' # Y, X, Xtest should be included in the inputs
 #' linearReg <- function(Y, X, Xtest){
+#'     X <- as.data.frame(X)
+#'     Xtest <- as.data.frame(Xtest)
 #'     data <- data.frame(Y = Y, X)
 #'     fit <- lm(Y ~ ., data = data)
 #'     as.numeric(predict(fit, Xtest))
 #' }
-#' X <- as.data.frame(X)
-#' Xtest <- as.data.frame(Xtest)
 #' obj <- conformal(X, Y, type = "mean",
 #'                  outfun = linearReg, wtfun = NULL, useCV = FALSE)
 #' predict(obj, Xtest, alpha = 0.1)
+#' 
+#' # Run weighted split-CQR with user-defined weights
+#' wtfun <- function(X){
+#'     pnorm(X[, 1])
 #' }
+#' obj <- conformal(X, Y, type = "CQR", quantiles = c(0.05, 0.95),
+#'                  outfun = "quantRF", wtfun = wtfun, useCV = FALSE)
+#' predict(obj, Xtest, alpha = 0.1)
+#' 
+#' # Run weighted CQR-CV+ with user-defined weights
+#' # Use a list of identical functions
+#' set.seed(1)
+#' wtfun_list <- lapply(1:10, function(i){wtfun})
+#' obj1 <- conformal(X, Y, type = "CQR", quantiles = c(0.05, 0.95),
+#'                   outfun = "quantRF", wtfun = wtfun_list, useCV = TRUE)
+#' predict(obj1, Xtest, alpha = 0.1)
+#'
+#' # Use a single function. Equivalent to the above approach
+#' set.seed(1)
+#' obj2 <- conformal(X, Y, type = "CQR", quantiles = c(0.05, 0.95),
+#'                   outfun = "quantRF", wtfun = wtfun, useCV = TRUE)
+#' predict(obj2, Xtest, alpha = 0.1)
+#' }
+#' 
 #' @export
 conformal <- function(X, Y,
                       type = c("CQR", "mean"),
@@ -178,7 +201,7 @@ conformal <- function(X, Y,
                          CQR = quantRF,
                          mean = RF)
     } else if (is.character(outfun)){
-        outfun <- str_fun(outfun[1])
+        outfun <- str_outfun(outfun[1])
     } else if (is.function(outfun)){
         check_outfun(outfun, type)
     } else {

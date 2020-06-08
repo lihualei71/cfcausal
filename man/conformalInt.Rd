@@ -25,35 +25,35 @@ conformalInt(
 \arguments{
 \item{X}{covariates.}
 
-\item{Y}{interval outcomes, a matrix with two columns.}
+\item{Y}{interval outcomes. A matrix with two columns.}
 
-\item{type}{a string that is either "CQR" or "mean".}
+\item{type}{a string that takes values in \{"CQR", "mean"\}.}
 
-\item{lofun}{the function to fit the lower bound or a valid string; see Details.}
+\item{lofun}{a function to fit the lower bound, or a valid string. See Details.}
 
-\item{loquantile}{the quantile to fit for \code{lofun}.}
+\item{loquantile}{the quantile to be fit by \code{lofun}. Only used when \code{type = "CQR"}.}
 
 \item{loparams}{a list of other parameters to be passed into \code{lofun}.}
 
-\item{upfun}{the function to fit the upper bound or a valid string; see Details.}
+\item{upfun}{a function to fit the upper bound, or a valid string; see Details.}
 
-\item{upquantile}{the quantile to fit for \code{upfun}.}
+\item{upquantile}{the quantile to be fit by \code{upfun}. Only used when \code{type = "CQR"}.}
 
 \item{upparams}{a list of other parameters to be passed into \code{upfun}.}
 
-\item{wtfun}{NULL for unweighted conformal inference or a function for weighted conformal inference
-when \code{useCV = FALSE} and a list of functions for weighted conformal inference when \code{useCV = TRUE};
-see Details.}
+\item{wtfun}{NULL for unweighted conformal inference, or a function for weighted conformal inference
+when \code{useCV = FALSE}, or a list of functions for weighted conformal inference when \code{useCV = TRUE}.
+See Details.}
 
 \item{useCV}{FALSE for split conformal inference and TRUE for CV+.}
 
-\item{trainprop}{proportion of units for training \code{outfun}.}
+\item{trainprop}{proportion of units for training \code{outfun}. The default it 75\%. Only used when \code{useCV = FALSE}.}
 
-\item{trainid}{indices of training units; NULL by default and indices will be randomly sampled.}
+\item{trainid}{indices of training units. The default is NULL, generating random indices. Only used when \code{useCV = FALSE}.}
 
-\item{nfolds}{number of folds; 10 by default.}
+\item{nfolds}{number of folds. The default is 10. Only used when \code{useCV = TRUE}.}
 
-\item{idlist}{list of indices of length \code{nfolds}; NULL by default and indices will be randomly sampled.}
+\item{idlist}{a list of indices of length \code{nfolds}. The default is NULL, generating random indices. Only used when \code{useCV = TRUE}.}
 }
 \value{
 a \code{conformalIntSplit} object when \code{useCV = FALSE} with the following attributes:
@@ -73,29 +73,29 @@ or a \code{conformalIntCV} object when \code{useCV = TRUE} with the following at
 }
 }
 \description{
-\code{conformalInt} is a framework for weighted and unweighted conformal inference with interval
+\code{conformalInt} is a framework for weighted and unweighted conformal inference for interval
 outcomes. It supports both weighted split conformal inference and weighted CV+,
 including weighted Jackknife+ as a special case. For each type, it supports both conformalized
-quantile regression (CQR) and standard conformal inference based on mean regression.
+quantile regression (CQR) and standard conformal inference based on conditional mean regression.
 }
 \details{
 The conformal interval for a testing point x is in the form of
 \eqn{[\hat{m}^{L}(x) - \eta, \hat{m}^{R}(x) + \eta]} where \eqn{\hat{m}^{L}(x)} is fit by \code{lofun}
 and \eqn{\hat{m}^{R}(x)} is fit by \code{upfun}.
 
-\code{lofun} or \code{upfun} can be a valid string, including
+\code{lofun}/\code{upfun} can be a valid string, including
 \itemize{
-\item "RF" for random forest that predicts the conditional mean, a wrapper from \code{randomForest} package.
+\item "RF" for random forest that predicts the conditional mean, a wrapper built on \code{randomForest} package.
   Used when \code{type = "mean"};
-\item "quantRF" for quantile random forest that predicts the conditional quantiles, a wrapper from
+\item "quantRF" for quantile random forest that predicts the conditional quantiles, a wrapper built on
   \code{grf} package. Used when \code{type = "CQR"};
-\item "Boosting" for gradient boosting that predicts the conditional mean, a wrapper from \code{gbm}
+\item "Boosting" for gradient boosting that predicts the conditional mean, a wrapper built on \code{gbm}
    package. Used when \code{type = "mean"};
-\item "quantBoosting" for quantile gradient boosting that predicts the conditional quantiles, a wrapper from
+\item "quantBoosting" for quantile gradient boosting that predicts the conditional quantiles, a wrapper built on
   \code{gbm} package. Used when \code{type = "CQR"};
-\item "BART" for gradient boosting that predicts the conditional mean, a wrapper from \code{bartMachine}
+\item "BART" for gradient boosting that predicts the conditional mean, a wrapper built on \code{bartMachine}
    package. Used when \code{type = "mean"};
-\item "quantBART" for quantile gradient boosting that predicts the conditional quantiles, a wrapper from
+\item "quantBART" for quantile gradient boosting that predicts the conditional quantiles, a wrapper built on
   \code{bartMachine} package. Used when \code{type = "CQR"};
 }
 
@@ -105,8 +105,7 @@ or a function object whose input must include, but not limited to
 \item \code{X} for covariates in the training data;
 \item \code{Xtest} for covariates in the testing data.
 }
-When \code{type = "CQR"}, \code{lofun} or \code{upfun} should also include an argument \code{quantiles} that is either
-a vector of length 2 or a scalar, depending on the argument \code{side}. Other optional arguments can be
+When \code{type = "CQR"}, \code{lofun} and \code{upfun} should also include an argument \code{quantiles} that is a scalar. The output of \code{lofun} and \code{upfun} must be a vector giving the conditional quantile estimate or conditional mean estimate. Other optional arguments can be
 passed into \code{lofun} and \code{upfun} through \code{loparams} and \code{upparams}.
 }
 \examples{
@@ -179,16 +178,41 @@ predict(obj, Xtest, alpha = 0.1)
 # Run unweighted standard split conformal inference with a self-defined linear regression
 # Y, X, Xtest should be included in the inputs
 linearReg <- function(Y, X, Xtest){
+    X <- as.data.frame(X)
+    Xtest <- as.data.frame(Xtest)
     data <- data.frame(Y = Y, X)
     fit <- lm(Y ~ ., data = data)
     as.numeric(predict(fit, Xtest))
 }
-X <- as.data.frame(X)
-Xtest <- as.data.frame(Xtest)
 obj <- conformalInt(X, Y, type = "mean",
                     lofun = linearReg, upfun = linearReg,
                     wtfun = NULL, useCV = FALSE)
 predict(obj, Xtest, alpha = 0.1)
+
+# Run weighted split-CQR with user-defined weights
+wtfun <- function(X){
+    pnorm(X[, 1])
+}
+obj <- conformalInt(X, Y, type = "CQR", quantiles = c(0.05, 0.95),
+                    lofun = "quantRF", upfun = "quantRF",
+                    wtfun = wtfun, useCV = FALSE)
+predict(obj, Xtest, alpha = 0.1)
+
+# Run weighted CQR-CV+ with user-defined weights
+# Use a list of identical functions
+set.seed(1)
+wtfun_list <- lapply(1:10, function(i){wtfun})
+obj1 <- conformalInt(X, Y, type = "CQR", quantiles = c(0.05, 0.95),
+                     lofun = "quantRF", upfun = "quantRF",
+                     wtfun = wtfun_list, useCV = TRUE)
+predict(obj1, Xtest, alpha = 0.1)
+
+# Use a single function. Equivalent to the above approach
+set.seed(1)
+obj2 <- conformalInt(X, Y, type = "CQR", quantiles = c(0.05, 0.95),
+                     lofun = "quantRF", upfun = "quantRF",
+                     wtfun = wtfun, useCV = TRUE)
+predict(obj2, Xtest, alpha = 0.1)
 }
 }
 \seealso{

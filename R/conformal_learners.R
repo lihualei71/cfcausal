@@ -12,15 +12,23 @@ quantRF <- function(Y, X, Xtest, quantiles, ...){
 
 ## random forest. randomForest package needed
 RF <- function(Y, X, Xtest, ...){
-    fit <- randomForest::randomForest(x = X, y = Y, ...)
     dist <- guessClass(Y)
     if (dist == "gaussian"){
+        fit <- randomForest::randomForest(x = X, y = Y, ...)
         res <- predict(fit, newdata = Xtest)
         res <- as.numeric(res)
     } else if (dist == "bernoulli"){
+        if (!is.factor(Y)){
+            Y <- as.factor(Y)
+        }
+        fit <- randomForest::randomForest(x = X, y = Y, ...)
         res <- predict(fit, newdata = Xtest, type = "prob")
         res <- as.numeric(res[, 2])
     } else if (dist == "multinomial"){
+        if (!is.factor(Y)){
+            Y <- as.factor(Y)
+        }
+        fit <- randomForest::randomForest(x = X, y = Y, ...)
         res <- predict(fit, newdata = Xtest, type = "prob")
         res <- as.matrix(res)
     }

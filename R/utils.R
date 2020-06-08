@@ -54,7 +54,7 @@ gen_cv_ids <- function(n, nfolds, offset = 0){
 }
 
 ## Convert a valid outfun string to the function
-str_fun <- function(method){
+str_outfun <- function(method){
     if (method == "RF"){
         if (!requireNamespace("randomForest")){
             stop("randomForest package needs to be installed")
@@ -90,6 +90,23 @@ str_fun <- function(method){
     }
 }
 
+## Convert a valid psfun string to the function
+str_psfun <- function(method){
+    if (method == "RF"){
+        if (!requireNamespace("randomForest")){
+            stop("randomForest package needs to be installed")
+        }
+        return(RF)
+    } else if (method == "Boosting"){
+        if (!requireNamespace("gbm")){
+            stop("gbm package needs to be installed")
+        }
+        return(Boosting)
+    } else {
+        stop(paste0(method, " is not supported. Please input a valid string or a function that meets the minimal requirements described in the man page"))
+    }
+}
+
 ## Check if the required inputs are included in outfun
 check_outfun <- function(fun, type){
     args <- methods::formalArgs(fun)
@@ -107,9 +124,17 @@ check_outfun <- function(fun, type){
 }
 
 ## Check if the required inputs are included in wtfun
-check_wtfun <- function(fun, type){
+check_wtfun <- function(fun){
     args <- formalArgs(fun)
     if (!("X" %in% args)){
         stop("wtfun should include 'X' as inputs")
+    }
+}
+
+## Check if the required inputs are included in psfun
+check_psfun <- function(fun){
+    args <- formalArgs(fun)
+    if (!all(c("Y", "X", "Xtest") %in% args)){
+        stop("psfun should include 'Y', 'X' and 'Xtest' as inputs")
     }
 }
