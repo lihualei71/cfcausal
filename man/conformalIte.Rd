@@ -36,65 +36,64 @@ conformalIte(
 \arguments{
 \item{X}{covariates.}
 
-\item{Y}{observed outcome.}
+\item{Y}{observed outcome vector.}
 
 \item{T}{treatment indicator, a binary vector.}
 
 \item{alpha}{confidence level.}
 
-\item{algo}{a string that is either "nest" or "naive" or "counterfactual"; see Details.}
+\item{algo}{a string that takes values in \{"nest", "naive", "counterfactual"\}. See Details.}
 
-\item{exact}{a logical indicating whether the exact calibration is used for nested approach;
-used only when \code{algo = "nest"}.}
+\item{exact}{a logical indicating whether the exact calibration is used for nested approach. Used only when \code{algo = "nest"}. See Details.}
 
-\item{type}{a string that is either "CQR" or "mean".}
+\item{type}{a string that takes values in \{"CQR", "mean"\}.}
 
-\item{side}{a string that is either "two" or "above" or "below". The value "two" yields two-sided intervals, the value "above" yields one-sided intervals in the form of \eqn{(-\infty, a(x)]} and the value "below" yields one-sided intervals in the form of \eqn{[a(x), \infty)}.}
+\item{side}{a string that takes values in \{"two", "above", "below"\}. See Details.}
 
-\item{quantiles}{for covariates in the training data. Only necessary when \code{type = "CQR"}. See Details.}
+\item{quantiles}{for covariates in the training data. Used only when \code{type = "CQR"}. See Details.}
 
-\item{outfun}{a function that models the conditional mean or quantiles or a valid string; see Details.
+\item{outfun}{a function that models the conditional mean or quantiles, or a valid string. 
 The default is random forest when \code{type = "mean"} and quantile random forest when
-\code{type = "CQR"}.}
+\code{type = "CQR"}. See Details.}
 
 \item{outparams}{a list of other parameters to be passed into \code{outfun}.}
 
-\item{psfun}{a function that models the missing mechanism (probability of missing given X); see Details.
-The default is "Boosting".}
+\item{psfun}{a function that models the missing mechanism (probability of missing given X), or a valid string. 
+The default is "Boosting". See Details.}
 
 \item{psparams}{a list of other parameters to be passed into \code{psfun}.}
 
-\item{cfprop}{the proportion of units to be used to compute ITE intervals in nested approach; used only when
+\item{cfprop}{the proportion of units to be used to compute ITE intervals in nested approach. Used only when
 \code{algo = "nest"}.}
 
-\item{citype}{the type of interval conformal inference used in the nested approach with exact calibration;
-used only when \code{algo = "nest"} and \code{exact = TRUE}.}
+\item{citype}{the type of interval conformal inference used in the nested approach with exact calibration.
+Used only when \code{algo = "nest"} and \code{exact = TRUE}.}
 
-\item{lofun}{the function to fit the lower bound or a valid string; see Details; used only when
-\code{algo = "nest"}.}
+\item{lofun}{the function to fit the lower bound, or a valid string. Used only when
+\code{algo = "nest"}. See Details.}
 
-\item{loquantile}{the quantile to fit for \code{lofun}; see Details; used only when
-\code{algo = "nest"}, \code{exact = TRUE} and \code{citype = "CQR"}.}
+\item{loquantile}{the quantile to fit for \code{lofun}; see Details. Used only when
+\code{algo = "nest"} and \code{citype = "CQR"}. See Details.}
 
 \item{loparams}{a list of other parameters to be passed into \code{lofun}.}
 
-\item{upfun}{the function to fit the upper bound or a valid string; see Details; used only when
-\code{algo = "nest"}.}
+\item{upfun}{the function to fit the upper bound, or a valid string. Used only when
+\code{algo = "nest"}. See Details.}
 
-\item{upquantile}{the quantile to fit for \code{upfun}; see Details; used only when
-\code{algo = "nest"}, \code{exact = TRUE} and \code{citype = "CQR"}.}
+\item{upquantile}{the quantile to fit for \code{upfun}. Used only when
+\code{algo = "nest"} and \code{citype = "CQR"}. See Details.}
 
 \item{upparams}{a list of other parameters to be passed into \code{upfun}.}
 
 \item{useCV}{FALSE for split conformal inference and TRUE for CV+.}
 
-\item{trainprop}{proportion of units for training \code{outfun}.}
+\item{trainprop}{proportion of units for training \code{outfun}. The default if 75\%. Used only when \code{useCV = FALSE}.}
 
-\item{nfolds}{number of folds; 10 by default.}
+\item{nfolds}{number of folds. The default is 10. Used only when \code{useCV = TRUE}.}
 
-\item{wthigh}{upper truncation level of weights; see \code{\link{predict.conformalSplit}} or \code{\link{predict.conformalCV}}.}
+\item{wthigh}{upper truncation level of weights. See \code{\link{predict.conformalSplit}} or \code{\link{predict.conformalCV}}.}
 
-\item{wtlow}{lower truncation level of weights; see \code{\link{predict.conformalSplit}} or \code{\link{predict.conformalCV}}.}
+\item{wtlow}{lower truncation level of weights. See \code{\link{predict.conformalSplit}} or \code{\link{predict.conformalCV}}.}
 }
 \value{
 a function that outputs the interval estimates on a given dataset. When \code{algo = "nest"} or \code{"naive"}, it takes
@@ -130,7 +129,7 @@ and the interval for the missing potential outcome.
 When \code{side = "above"},
 intervals are of form [-Inf, a(x)] and when \code{side = "below"} the intervals are of form [a(x), Inf].
 
-\code{quantiles}
+When \code{type = "CQR"}, \code{quantiles} must be a vector of 2, regardless of \code{side}. When \code{side = "two"}, \code{quantiles} will be used in \code{outfun} for both Y(1) and Y(0); when \code{side = "above"} or \code{"below"}, \code{quantiles[1]} will be used for Y(0) and \code{quantiles[2]} will be used for Y(1).
 
 \code{outfun} is applied to both Y(1) and Y(0). \code{outfun} can be a valid string, including
 \itemize{

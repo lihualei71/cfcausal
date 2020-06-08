@@ -81,10 +81,10 @@
 #' @param Y observed outcome vector.
 #' @param T treatment indicator, a binary vector.
 #' @param alpha confidence level.
-#' @param algo a string that takes values in \{"nest", "naive", "counterfactual"}. See Details.
+#' @param algo a string that takes values in \{"nest", "naive", "counterfactual"\}. See Details.
 #' @param exact a logical indicating whether the exact calibration is used for nested approach. Used only when \code{algo = "nest"}. See Details.
 #' @param type a string that takes values in \{"CQR", "mean"\}.
-#' @param side a string that takes values in \{"two", "above", "below"}. See Details.
+#' @param side a string that takes values in \{"two", "above", "below"\}. See Details.
 #' @param quantiles for covariates in the training data. Used only when \code{type = "CQR"}. See Details.
 #' @param outfun a function that models the conditional mean or quantiles, or a valid string. 
 #'               The default is random forest when \code{type = "mean"} and quantile random forest when

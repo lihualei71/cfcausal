@@ -31,13 +31,13 @@ conformalInt(
 
 \item{lofun}{a function to fit the lower bound, or a valid string. See Details.}
 
-\item{loquantile}{the quantile to be fit by \code{lofun}. Only used when \code{type = "CQR"}.}
+\item{loquantile}{the quantile to be fit by \code{lofun}. Used only when \code{type = "CQR"}.}
 
 \item{loparams}{a list of other parameters to be passed into \code{lofun}.}
 
 \item{upfun}{a function to fit the upper bound, or a valid string; see Details.}
 
-\item{upquantile}{the quantile to be fit by \code{upfun}. Only used when \code{type = "CQR"}.}
+\item{upquantile}{the quantile to be fit by \code{upfun}. Used only when \code{type = "CQR"}.}
 
 \item{upparams}{a list of other parameters to be passed into \code{upfun}.}
 
@@ -47,13 +47,13 @@ See Details.}
 
 \item{useCV}{FALSE for split conformal inference and TRUE for CV+.}
 
-\item{trainprop}{proportion of units for training \code{outfun}. The default it 75\%. Only used when \code{useCV = FALSE}.}
+\item{trainprop}{proportion of units for training \code{outfun}. The default it 75\%. Used only when \code{useCV = FALSE}.}
 
-\item{trainid}{indices of training units. The default is NULL, generating random indices. Only used when \code{useCV = FALSE}.}
+\item{trainid}{indices of training units. The default is NULL, generating random indices. Used only when \code{useCV = FALSE}.}
 
-\item{nfolds}{number of folds. The default is 10. Only used when \code{useCV = TRUE}.}
+\item{nfolds}{number of folds. The default is 10. Used only when \code{useCV = TRUE}.}
 
-\item{idlist}{a list of indices of length \code{nfolds}. The default is NULL, generating random indices. Only used when \code{useCV = TRUE}.}
+\item{idlist}{a list of indices of length \code{nfolds}. The default is NULL, generating random indices. Used only when \code{useCV = TRUE}.}
 }
 \value{
 a \code{conformalIntSplit} object when \code{useCV = FALSE} with the following attributes:

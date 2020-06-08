@@ -29,7 +29,7 @@ conformal(
 
 \item{side}{a string that takes values in \{"two", "above", "below"\}. See Details.}
 
-\item{quantiles}{a scalar or a vector of length 2 depending on \code{side}. Only used when \code{type = "CQR"}. See Details.}
+\item{quantiles}{a scalar or a vector of length 2 depending on \code{side}. Used only when \code{type = "CQR"}. See Details.}
 
 \item{outfun}{a function that models the conditional mean/quantiles, or a valid string. 
 The default is random forest when \code{type = "mean"} and quantile random forest when
@@ -43,13 +43,13 @@ See Details.}
 
 \item{useCV}{FALSE for split conformal inference and TRUE for CV+.}
 
-\item{trainprop}{proportion of units for training \code{outfun}. The default if 75\%. Only used when \code{useCV = FALSE}.}
+\item{trainprop}{proportion of units for training \code{outfun}. The default if 75\%. Used only when \code{useCV = FALSE}.}
 
-\item{trainid}{indices of training units. The default is NULL, generating random indices. Only used when \code{useCV = FALSE}.}
+\item{trainid}{indices of training units. The default is NULL, generating random indices. Used only when \code{useCV = FALSE}.}
 
-\item{nfolds}{number of folds. The default is 10. Only used when \code{useCV = TRUE}.}
+\item{nfolds}{number of folds. The default is 10. Used only when \code{useCV = TRUE}.}
 
-\item{idlist}{a list of indices of length \code{nfolds}. The default is NULL, generating random indices. Only used when \code{useCV = TRUE}.}
+\item{idlist}{a list of indices of length \code{nfolds}. The default is NULL, generating random indices. Used only when \code{useCV = TRUE}.}
 }
 \value{
 a \code{conformalSplit} object when \code{useCV = FALSE} with the following attributes:
