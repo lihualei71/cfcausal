@@ -4,3 +4,6 @@
 ^R_backup/*
 ^doc$
 ^Meta$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

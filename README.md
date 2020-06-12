@@ -2,7 +2,7 @@
 An R package for conformal inference of counterfactuals and individual treatment effects
 
 ## Overview
-This R package implements weighted conformal inference-based procedures for counterfactuals and individual treatment effects proposed in the paper: [Conformal Inference of Counterfactuals and Individual Treatment Effects](https://arxiv.org/abs/). It includes both the split conformal inference and cross-validation+. For each type of conformal inference, both conformalized quantile regression (CQR) and standard conformal inference are supported. It provides a pool of convenient learners and allows flexible user-defined learners for conditional mean and quantiles. 
+This R package implements weighted conformal inference-based procedures for counterfactuals and individual treatment effects proposed in our paper: [Conformal Inference of Counterfactuals and Individual Treatment Effects](https://arxiv.org/abs/2006.06138). It includes both the split conformal inference and cross-validation+. For each type of conformal inference, both conformalized quantile regression (CQR) and standard conformal inference are supported. It provides a pool of convenient learners and allows flexible user-defined learners for conditional mean and quantiles. 
 
 - `conformalCf()` produces intervals for counterfactuals or outcomes with missing values in general.
 - `conformalIte()` produces intervals for individual treatment effects with a binary treatment under the potential outcome framework. 
@@ -25,7 +25,7 @@ devtools::install_github("lihualei71/cfcausal", build_vignettes = TRUE)
 We suggest installing [grf](https://cran.r-project.org/web/packages/grf/grf.pdf), [randomForest](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf), [gbm](https://cran.r-project.org/web/packages/gbm/gbm.pdf) and [bartMachine](https://cran.r-project.org/web/packages/bartMachine/bartMachine.pdf) to take advantage of the built-in learners. 
 
 ## Usage Examples
-We illustrate the usage of cfcausal package using simple synthetic datasets. For details please read the vignette (`vignette("cfcausal_demo", package = "cfcausal")`) and the manuals.
+We illustrate the usage of cfcausal package using simple synthetic datasets. For details please read the vignette (`vignette("cfcausal_demo", package = "cfcausal")`) and the manual.
 
 ```
 #### Conformal inference of counterfactuals
@@ -97,14 +97,14 @@ CIfun <- conformalIte(X, Y, T, alpha = 0.1,
                       outfun = "quantRF",  useCV = FALSE)
 CIfun(Xtest)
 
-# naive method
+# Naive method
 CIfun <- conformalIte(X, Y, T, alpha = 0.1, 
                       algo = "naive", type = "CQR",
                       quantiles = c(0.05, 0.95), 
                       outfun = "quantRF",  useCV = FALSE)
 CIfun(Xtest)
 
-# counterfactual method, Y and T needs to be observed
+# Counterfactual method, Y and T needs to be observed
 pstest <- pnorm(Xtest[, 1])
 Ttest <- as.numeric(pstest < runif(ntest))
 Y1test <- Xtest %*% beta + rnorm(ntest)

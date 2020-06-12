@@ -2,19 +2,14 @@ Package: cfcausal
 Type: Package
 Title: Conformal inference of counterfactuals and individual treatment effects
 Version: 0.2.0
-Author: person("Lihua", "Lei", email = "lihualei@stanford.edu", role = c("aut", "cre"))
+Author: Lihua Lei [aut, cre], Emmanuel Candes [ctb]
 Maintainer: Lihua Lei <lihualei@stanford.edu>
 Description: Implementation of weighted conformal inference for counterfactuals and individual treatment effects, including both split conformal inference and cross-valiation+ (CV+).
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Suggests:
-    bartMachine,
-    gbm,
-    grf,
-    knitr,
-    randomForest,
-    rmarkdown
+    bartMachine, gbm, grf, knitr, randomForest, rmarkdown
 RoxygenNote: 7.0.2
 Imports:
     methods
