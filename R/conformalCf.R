@@ -65,7 +65,7 @@
 #' can be passed into \code{psfun} through \code{psparams}.
 #' 
 #' @param X covariates.
-#' @param Y outcome vector with missing values encoded as NA. See Details
+#' @param Y outcome vector with missing values encoded as NA. See Details.
 #' @param estimand a string that takes values in \{"unconditional", "nonmissing", "missing"\}. See Details.
 #' @param type a string that takes values in \{"CQR", "mean"\}.
 #' @param side a string that takes values in \{"two", "above", "below"\}. See Details.
