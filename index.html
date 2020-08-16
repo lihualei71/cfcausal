@@ -105,7 +105,7 @@ devtools::install_github("lihualei71/cfcausal")</code></pre>
 <h2 class="hasAnchor">
 <a href="#usage-examples" class="anchor"></a>Usage Examples</h2>
 <p>We illustrate the usage of cfcausal package using simple synthetic datasets. For details please read the vignette (<code><a href="articles/cfcausal_demo.html">vignette("cfcausal_demo", package = "cfcausal")</a></code>) and the manual.</p>
-<pre><code><a href="https://rdrr.io/pkg/cfcausal/man">#### Conformal inference of counterfactuals
+<pre><code>#### Conformal inference of counterfactuals
 library("cfcausal")
 
 # Generate data
@@ -135,8 +135,8 @@ predict(obj, Xtest, alpha = 0.1)
 obj &lt;- conformalCf(X, Y, type = "CQR", 
                    quantiles = c(0.05, 0.95),
                    outfun = "quantRF", useCV = TRUE)
-predict(obj, Xtest, alpha = 0.1)</a></code></pre>
-<pre><code><a href="https://rdrr.io/pkg/cfcausal/man">#### Conformal inference of individual treatment effects
+predict(obj, Xtest, alpha = 0.1)</code></pre>
+<pre><code>#### Conformal inference of individual treatment effects
 library("cfcausal")
 
 # Generate potential outcomes from two linear models
@@ -188,7 +188,7 @@ CIfun &lt;- conformalIte(X, Y, T, alpha = 0.1,
                       algo = "counterfactual", type = "CQR",
                       quantiles = c(0.05, 0.95), 
                       outfun = "quantRF",  useCV = FALSE)
-CIfun(Xtest, Ytest, Ttest)</a></code></pre>
+CIfun(Xtest, Ytest, Ttest)</code></pre>
 </div>
 </div>
   </div>
