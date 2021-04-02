@@ -49,9 +49,9 @@ conformalCV <- function(X, Y,
     info <- list()
     for (k in 1:nfolds){
         testid <- idlist[[k]]
-        Xtrain <- X[-testid, ]
+        Xtrain <- X[-testid, ,drop=FALSE]
         Ytrain <- Y[-testid]
-        Xval <- X[testid, ]
+        Xval <- X[testid, ,drop=FALSE]
         Yval <- Y[testid]
 
         outparams <- c(list(Y = Ytrain, X = Xtrain), outparams0)

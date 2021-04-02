@@ -32,10 +32,10 @@ conformalIteNest <- function(X, Y, T,
     ct_cfid <- sample(nct, nct_cf)
     cfid <- c(tr_id[tr_cfid], ct_id[ct_cfid])
 
-    Xtrain <- X[-cfid, ]
+    Xtrain <- X[-cfid, ,drop=FALSE]
     Ytrain <- Y[-cfid]
     Ttrain <- T[-cfid]
-    Xcf <- X[cfid, ]
+    Xcf <- X[cfid, ,drop=FALSE]
     Ycf <- Y[cfid]
     Tcf <- T[cfid]
 

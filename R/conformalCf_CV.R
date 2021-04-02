@@ -24,7 +24,7 @@ conformalCf_CV <- function(X, Y,
     if (estimand == "unconditional"){
         wtfun <- lapply(1:nfolds, function(k){
             testid <- idlist[[k]]
-            Xtrain <- X[-testid, ]
+            Xtrain <- X[-testid, ,drop=FALSE]
             Ttrain <- T[-testid]
             psparams <- c(list(Y = Ttrain, X = Xtrain), psparams0)
             function(X){
@@ -47,7 +47,7 @@ conformalCf_CV <- function(X, Y,
     } else if (estimand == "missing"){
         wtfun <- lapply(1:nfolds, function(k){
             testid <- idlist[[k]]
-            Xtrain <- X[-testid, ]
+            Xtrain <- X[-testid, ,drop=FALSE]
             Ttrain <- T[-testid]
             psparams <- c(list(Y = Ttrain, X = Xtrain), psparams0)
             function(X){
@@ -62,7 +62,7 @@ conformalCf_CV <- function(X, Y,
         }
     }
 
-    X <- X[inds1, ]
+    X <- X[inds1, ,drop=FALSE]
     Y <- Y[inds1]
     res <- conformalCV(X, Y,
                        type, side,

@@ -14,18 +14,13 @@ conformalCf_split <- function(X, Y,
     trainid1 <- sample(n1, floor(n1 * trainprop))
     trainid0 <- sample(n0, floor(n0 * trainprop))
     trainid <- c(inds1[trainid1], inds0[trainid0])
-    Xtrain <- X[trainid, ]
+    Xtrain <- X[trainid, ,drop=FALSE]
     Ttrain <- T[trainid]
 
     psparams0 <- psparams
     if (estimand == "unconditional"){
         psparams <- c(list(Y = Ttrain, X = Xtrain), psparams0)
         wtfun <- function(X){
-            ps <- do.call(psfun, c(list(Xtest = X), psparams))
-            1 / ps
-        }
-        psparams <- c(list(Y = T, X = X), psparams0)
-        wtfun_test <- function(X){
             ps <- do.call(psfun, c(list(Xtest = X), psparams))
             1 / ps
         }
@@ -39,14 +34,9 @@ conformalCf_split <- function(X, Y,
             ps <- do.call(psfun, c(list(Xtest = X), psparams))
             (1 - ps) / ps
         }
-        psparams <- c(list(Y = T, X = X), psparams0)
-        wtfun_test <- function(X){
-            ps <- do.call(psfun, c(list(Xtest = X), psparams))
-            (1 - ps) / ps
-        }
     }
 
-    X <- X[inds1, ]
+    X <- X[inds1, ,drop=FALSE]
     Y <- Y[inds1]
     res <- conformalSplit(X, Y,
                           type, side,
@@ -54,6 +44,5 @@ conformalCf_split <- function(X, Y,
                           outfun, outparams,
                           wtfun,
                           trainprop, trainid1)
-    res$wtfun <- wtfun_test
     return(res)
 }

@@ -181,10 +181,10 @@ conformalIte <- function(X, Y, T,
                          cfprop = 0.5,
                          citype = c("CQR", "mean"),
                          lofun = NULL,
-                         loquantile = 0.5,
+                         loquantile = 0.4,
                          loparams = list(),
                          upfun = NULL,
-                         upquantile = 0.5,
+                         upquantile = 0.6,
                          upparams = list(),
                          useCV = FALSE,
                          trainprop = 0.75,
@@ -223,25 +223,25 @@ conformalIte <- function(X, Y, T,
     }
 
     if (is.null(lofun)){
-        lofun <- switch(type,
+        lofun <- switch(citype,
                         CQR = quantRF,
                         mean = RF)
     } else if (is.character(lofun)){
-        outfun <- str_outfun(lofun[1])
+        lofun <- str_outfun(lofun[1])
     } else if (is.function(lofun)){
-        check_outfun(lofun, type)
+        check_outfun(lofun, citype)
     } else {
         stop("lofun must be NULL or a string or a function")
     }
 
     if (is.null(upfun)){
-        upfun <- switch(type,
+        upfun <- switch(citype,
                         CQR = quantRF,
                         mean = RF)
     } else if (is.character(upfun)){
-        outfun <- str_outfun(upfun[1])
+        upfun <- str_outfun(upfun[1])
     } else if (is.function(upfun)){
-        check_outfun(upfun, type)
+        check_outfun(upfun, citype)
     } else {
         stop("upfun must be NULL or a string or a function")
     }    

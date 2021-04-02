@@ -23,7 +23,7 @@ conformalCf(
 \arguments{
 \item{X}{covariates.}
 
-\item{Y}{outcome vector with missing values encoded as NA. See Details}
+\item{Y}{outcome vector with missing values encoded as NA. See Details.}
 
 \item{estimand}{a string that takes values in \{"unconditional", "nonmissing", "missing"\}. See Details.}
 

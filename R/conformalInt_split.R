@@ -27,9 +27,9 @@ conformalIntSplit <- function(X, Y,
     if (is.null(trainid)){
         trainid <- sample(n, floor(n * trainprop))
     }
-    Xtrain <- X[trainid, ]
+    Xtrain <- X[trainid, ,drop=FALSE]
     Ytrain <- Y[trainid, ]
-    Xval <- X[-trainid, ]
+    Xval <- X[-trainid, ,drop=FALSE]
     Yval <- Y[-trainid, ]
 
     if (type == "CQR"){
