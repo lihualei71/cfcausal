@@ -48,6 +48,8 @@ quantile regression (CQR) and standard conformal inference based on conditional 
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -59,9 +61,18 @@ quantile regression (CQR) and standard conformal inference based on conditional 
 
 
 
+<!-- dependencies from examples -->
+
+
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -75,19 +86,13 @@ quantile regression (CQR) and standard conformal inference based on conditional 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cfcausal</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -130,21 +135,21 @@ including weighted Jackknife+ as a special case. For each type, it supports both
 quantile regression (CQR) and standard conformal inference based on conditional mean regression.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>conformalCf</span>(
-  <span class='kw'>X</span>,
-  <span class='kw'>Y</span>,
-  estimand = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unconditional"</span>, <span class='st'>"nonmissing"</span>, <span class='st'>"missing"</span>),
-  type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"CQR"</span>, <span class='st'>"mean"</span>),
-  side = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"two"</span>, <span class='st'>"above"</span>, <span class='st'>"below"</span>),
-  quantiles = <span class='kw'>NULL</span>,
-  outfun = <span class='kw'>NULL</span>,
-  outparams = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  psfun = <span class='kw'>NULL</span>,
-  psparams = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  useCV = <span class='fl'>FALSE</span>,
-  trainprop = <span class='fl'>0.75</span>,
-  nfolds = <span class='fl'>10</span>
-)</pre>
+    <pre class="usage"><span class='fu'>conformalCf</span><span class='op'>(</span>
+  <span class='va'>X</span>,
+  <span class='va'>Y</span>,
+  estimand <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"unconditional"</span>, <span class='st'>"nonmissing"</span>, <span class='st'>"missing"</span><span class='op'>)</span>,
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"CQR"</span>, <span class='st'>"mean"</span><span class='op'>)</span>,
+  side <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"two"</span>, <span class='st'>"above"</span>, <span class='st'>"below"</span><span class='op'>)</span>,
+  quantiles <span class='op'>=</span> <span class='cn'>NULL</span>,
+  outfun <span class='op'>=</span> <span class='cn'>NULL</span>,
+  outparams <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  psfun <span class='op'>=</span> <span class='cn'>NULL</span>,
+  psparams <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  useCV <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  trainprop <span class='op'>=</span> <span class='fl'>0.75</span>,
+  nfolds <span class='op'>=</span> <span class='fl'>10</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -155,7 +160,7 @@ quantile regression (CQR) and standard conformal inference based on conditional 
     </tr>
     <tr>
       <th>Y</th>
-      <td><p>outcome vector with missing values encoded as NA. See Details</p></td>
+      <td><p>outcome vector with missing values encoded as NA. See Details.</p></td>
     </tr>
     <tr>
       <th>estimand</th>
@@ -263,114 +268,129 @@ can be passed into <code>psfun</code> through <code>psparams</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Generate data from a linear model</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1</span>)
-<span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fl'>1000</span>
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fl'>5</span>
-<span class='kw'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span> <span class='op'>*</span> <span class='kw'>d</span>), nrow = <span class='kw'>n</span>)
-<span class='kw'>beta</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fl'>5</span>)
-<span class='kw'>Y</span> <span class='op'>&lt;-</span> <span class='kw'>X</span> <span class='op'>%*%</span> <span class='kw'>beta</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>1000</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fl'>5</span>
+<span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span> <span class='op'>*</span> <span class='va'>d</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='va'>n</span><span class='op'>)</span>
+<span class='va'>beta</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>5</span><span class='op'>)</span>
+<span class='va'>Y</span> <span class='op'>&lt;-</span> <span class='va'>X</span> <span class='op'>%*%</span> <span class='va'>beta</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span>
 
 <span class='co'># Generate missing indicators</span>
-<span class='kw'>missing_prob</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='kw'>X</span>[, <span class='fl'>1</span>])
-<span class='kw'>if_missing</span> <span class='op'>&lt;-</span> <span class='kw'>missing_prob</span> <span class='op'>&lt;</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='kw'>n</span>)
-<span class='kw'>Y</span>[<span class='kw'>if_missing</span>] <span class='op'>&lt;-</span> <span class='fl'>NA</span>
+<span class='va'>missing_prob</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span><span class='op'>(</span><span class='va'>X</span><span class='op'>[</span>, <span class='fl'>1</span><span class='op'>]</span><span class='op'>)</span>
+<span class='va'>if_missing</span> <span class='op'>&lt;-</span> <span class='va'>missing_prob</span> <span class='op'>&lt;</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span>
+<span class='va'>Y</span><span class='op'>[</span><span class='va'>if_missing</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
 
 <span class='co'># Generate testing data</span>
-<span class='kw'>ntest</span> <span class='op'>&lt;-</span> <span class='fl'>5</span>
-<span class='kw'>Xtest</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>ntest</span> <span class='op'>*</span> <span class='kw'>d</span>), nrow = <span class='kw'>ntest</span>)
+<span class='va'>ntest</span> <span class='op'>&lt;-</span> <span class='fl'>5</span>
+<span class='va'>Xtest</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>ntest</span> <span class='op'>*</span> <span class='va'>d</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='va'>ntest</span><span class='op'>)</span>
 
 <span class='co'># Run weighted split CQR</span>
-<span class='kw'>obj</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span>(<span class='kw'>X</span>, <span class='kw'>Y</span>, type = <span class='st'>"CQR"</span>, quantiles = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.05</span>, <span class='fl'>0.95</span>),
-                   outfun = <span class='st'>"quantRF"</span>, useCV = <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>obj</span>, <span class='kw'>Xtest</span>, alpha = <span class='fl'>0.1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='output co'>#&gt;       lower    upper
-#&gt; 1 -2.214764 3.437599
-#&gt; 2 -2.339178 2.783611
-#&gt; 3 -4.768709 1.696285
-#&gt; 4 -5.129878 3.597455
-#&gt; 5 -3.069631 2.696356</div><div class='input'>
+<span class='va'>obj</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>Y</span>, type <span class='op'>=</span> <span class='st'>"CQR"</span>, quantiles <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.05</span>, <span class='fl'>0.95</span><span class='op'>)</span>,
+                   outfun <span class='op'>=</span> <span class='st'>"quantRF"</span>, useCV <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>obj</span>, <span class='va'>Xtest</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='output co'>#&gt;       lower    upper
+#&gt; 1 -2.694169 2.928830
+#&gt; 2 -2.644680 2.680240
+#&gt; 3 -4.768709 1.537865
+#&gt; 4 -5.136779 3.604356
+#&gt; 5 -3.036140 2.662865</div><div class='input'>
 <span class='co'># Run weighted standard conformal inference</span>
-<span class='kw'>obj</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span>(<span class='kw'>X</span>, <span class='kw'>Y</span>, type = <span class='st'>"mean"</span>,
-                   outfun = <span class='st'>"RF"</span>, useCV = <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>obj</span>, <span class='kw'>Xtest</span>, alpha = <span class='fl'>0.1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='output co'>#&gt;       lower      upper
-#&gt; 1 -2.969276  3.0286573
-#&gt; 2 -3.514796  2.5658039
-#&gt; 3 -6.222481 -0.2245474
-#&gt; 4 -4.680464  2.0538438
-#&gt; 5 -2.977028  3.0209053</div><div class='input'>
+<span class='va'>obj</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>Y</span>, type <span class='op'>=</span> <span class='st'>"mean"</span>,
+                   outfun <span class='op'>=</span> <span class='st'>"RF"</span>, useCV <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>obj</span>, <span class='va'>Xtest</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='output co'>#&gt;       lower      upper
+#&gt; 1 -2.554873  2.0402082
+#&gt; 2 -2.904058  1.7288508
+#&gt; 3 -5.072992 -0.4400834
+#&gt; 4 -4.330321  1.2443807
+#&gt; 5 -2.483102  2.1119798</div><div class='input'>
 <span class='co'># Run one-sided weighted split CQR</span>
-<span class='kw'>obj1</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span>(<span class='kw'>X</span>, <span class='kw'>Y</span>, type = <span class='st'>"CQR"</span>, side = <span class='st'>"above"</span>,
-                    quantiles = <span class='fl'>0.95</span>, outfun = <span class='st'>"quantRF"</span>, useCV = <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>obj1</span>, <span class='kw'>Xtest</span>, alpha = <span class='fl'>0.1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='output co'>#&gt;   lower        upper
-#&gt; 1  -Inf  2.947938272
-#&gt; 2  -Inf  0.938245968
-#&gt; 3  -Inf -0.005545316
-#&gt; 4  -Inf  3.654104472
-#&gt; 5  -Inf  1.878577659</div><div class='input'><span class='kw'>obj2</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span>(<span class='kw'>X</span>, <span class='kw'>Y</span>, type = <span class='st'>"CQR"</span>, side = <span class='st'>"below"</span>,
-                    quantiles = <span class='fl'>0.05</span>, outfun = <span class='st'>"quantRF"</span>, useCV = <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>obj2</span>, <span class='kw'>Xtest</span>, alpha = <span class='fl'>0.1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='output co'>#&gt;       lower upper
-#&gt; 1 -2.760589   Inf
-#&gt; 2 -2.435176   Inf
-#&gt; 3 -4.556369   Inf
-#&gt; 4 -4.933259   Inf
-#&gt; 5 -3.237160   Inf</div><div class='input'>
+<span class='va'>obj1</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>Y</span>, type <span class='op'>=</span> <span class='st'>"CQR"</span>, side <span class='op'>=</span> <span class='st'>"above"</span>,
+                    quantiles <span class='op'>=</span> <span class='fl'>0.95</span>, outfun <span class='op'>=</span> <span class='st'>"quantRF"</span>, useCV <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>obj1</span>, <span class='va'>Xtest</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='output co'>#&gt;   lower      upper
+#&gt; 1  -Inf  2.2160363
+#&gt; 2  -Inf  0.7140021
+#&gt; 3  -Inf -0.1788658
+#&gt; 4  -Inf  3.2922861
+#&gt; 5  -Inf  1.4599988</div><div class='input'><span class='va'>obj2</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>Y</span>, type <span class='op'>=</span> <span class='st'>"CQR"</span>, side <span class='op'>=</span> <span class='st'>"below"</span>,
+                    quantiles <span class='op'>=</span> <span class='fl'>0.05</span>, outfun <span class='op'>=</span> <span class='st'>"quantRF"</span>, useCV <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>obj2</span>, <span class='va'>Xtest</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='output co'>#&gt;       lower upper
+#&gt; 1 -2.168817   Inf
+#&gt; 2 -1.705976   Inf
+#&gt; 3 -4.792848   Inf
+#&gt; 4 -5.133214   Inf
+#&gt; 5 -2.333960   Inf</div><div class='input'>
 <span class='co'># Run split CQR with a self-defined quantile random forest</span>
 <span class='co'># Y, X, Xtest, quantiles should be included in the inputs</span>
-<span class='kw'>quantRF</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>Y</span>, <span class='kw'>X</span>, <span class='kw'>Xtest</span>, <span class='kw'>quantiles</span>, <span class='kw'>...</span>){
-    <span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='kw'>grf</span>::<span class='fu'><a href='https://rdrr.io/pkg/grf/man/quantile_forest.html'>quantile_forest</a></span>(<span class='kw'>X</span>, <span class='kw'>Y</span>, quantiles = <span class='kw'>quantiles</span>, <span class='kw'>...</span>)
-    <span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>fit</span>, <span class='kw'>Xtest</span>, quantiles = <span class='kw'>quantiles</span>)
-    <span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw'>quantiles</span>) <span class='op'>==</span> <span class='fl'>1</span>){
-        <span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span>(<span class='kw'>res</span>)
-    } <span class='co'>else</span> {
-        <span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='kw'>res</span>)
-    }
-    <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='kw'>res</span>)
-}
-<span class='kw'>obj</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span>(<span class='kw'>X</span>, <span class='kw'>Y</span>, type = <span class='st'>"CQR"</span>, quantiles = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.05</span>, <span class='fl'>0.95</span>),
-                   outfun = <span class='kw'>quantRF</span>, useCV = <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>obj</span>, <span class='kw'>Xtest</span>, alpha = <span class='fl'>0.1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='output co'>#&gt;       lower    upper
-#&gt; 1 -2.503318 3.726720
-#&gt; 2 -2.503318 3.392504
-#&gt; 3 -5.057830 1.763339
-#&gt; 4 -4.892849 3.951767
-#&gt; 5 -3.358752 2.985478</div><div class='input'>
+<span class='va'>quantRF</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>Y</span>, <span class='va'>X</span>, <span class='va'>Xtest</span>, <span class='va'>quantiles</span>, <span class='va'>...</span><span class='op'>)</span><span class='op'>{</span>
+    <span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>grf</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/grf/man/quantile_forest.html'>quantile_forest</a></span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>Y</span>, quantiles <span class='op'>=</span> <span class='va'>quantiles</span>, <span class='va'>...</span><span class='op'>)</span>
+    <span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>fit</span>, <span class='va'>Xtest</span>, quantiles <span class='op'>=</span> <span class='va'>quantiles</span><span class='op'>)</span>
+    <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>quantiles</span><span class='op'>)</span> <span class='op'>==</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>{</span>
+        <span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
+    <span class='op'>}</span> <span class='kw'>else</span> <span class='op'>{</span>
+        <span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
+    <span class='op'>}</span>
+    <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='va'>obj</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>Y</span>, type <span class='op'>=</span> <span class='st'>"CQR"</span>, quantiles <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.05</span>, <span class='fl'>0.95</span><span class='op'>)</span>,
+                   outfun <span class='op'>=</span> <span class='va'>quantRF</span>, useCV <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>obj</span>, <span class='va'>Xtest</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='output co'>#&gt;       lower    upper
+#&gt; 1 -2.761585 3.086488
+#&gt; 2 -2.197869 2.702938
+#&gt; 3 -5.121073 1.504797
+#&gt; 4 -5.110667 2.836832
+#&gt; 5 -3.052736 2.679462</div><div class='input'>
 <span class='co'># Run standard split conformal inference with a self-defined linear regression</span>
 <span class='co'># Y, X, Xtest should be included in the inputs</span>
-<span class='kw'>linearReg</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>Y</span>, <span class='kw'>X</span>, <span class='kw'>Xtest</span>){
-    <span class='kw'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span>(<span class='kw'>X</span>)
-    <span class='kw'>Xtest</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span>(<span class='kw'>Xtest</span>)
-    <span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(Y = <span class='kw'>Y</span>, <span class='kw'>X</span>)
-    <span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>Y</span> <span class='op'>~</span> <span class='kw'>.</span>, data = <span class='kw'>data</span>)
-    <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>fit</span>, <span class='kw'>Xtest</span>))
-}
-<span class='kw'>obj</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span>(<span class='kw'>X</span>, <span class='kw'>Y</span>, type = <span class='st'>"mean"</span>,
-                   outfun = <span class='kw'>linearReg</span>, useCV = <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>obj</span>, <span class='kw'>Xtest</span>, alpha = <span class='fl'>0.1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='output co'>#&gt;       lower        upper
-#&gt; 1 -1.938254  1.423229284
-#&gt; 2 -3.364401 -0.002917861
-#&gt; 3 -5.062471 -1.700988223
-#&gt; 4 -4.496047 -0.252405212
-#&gt; 5 -2.176729  1.184753688</div><div class='input'>
+<span class='va'>linearReg</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>Y</span>, <span class='va'>X</span>, <span class='va'>Xtest</span><span class='op'>)</span><span class='op'>{</span>
+    <span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>X</span><span class='op'>)</span>
+    <span class='va'>Xtest</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>Xtest</span><span class='op'>)</span>
+    <span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>Y <span class='op'>=</span> <span class='va'>Y</span>, <span class='va'>X</span><span class='op'>)</span>
+    <span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>Y</span> <span class='op'>~</span> <span class='va'>.</span>, data <span class='op'>=</span> <span class='va'>data</span><span class='op'>)</span>
+    <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>fit</span>, <span class='va'>Xtest</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='va'>obj</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>Y</span>, type <span class='op'>=</span> <span class='st'>"mean"</span>,
+                   outfun <span class='op'>=</span> <span class='va'>linearReg</span>, useCV <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>obj</span>, <span class='va'>Xtest</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: the condition has length &gt; 1 and only the first element will be used</span></div><div class='output co'>#&gt;       lower      upper
+#&gt; 1 -1.786284  1.3121660
+#&gt; 2 -3.318391 -0.1431223
+#&gt; 3 -5.035091 -1.9366408
+#&gt; 4 -4.353584 -0.8314229
+#&gt; 5 -2.067116  1.0313344</div><div class='input'>
 <span class='co'># Run split CQR with a built-in psfun</span>
 <span class='co'># Y, X, Xtest, should be included in the inputs</span>
-<span class='kw'>obj</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span>(<span class='kw'>X</span>, <span class='kw'>Y</span>, type = <span class='st'>"CQR"</span>, quantiles = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.05</span>, <span class='fl'>0.95</span>),
-                   outfun = <span class='st'>"quantRF"</span>, psfun = <span class='st'>"RF"</span>, useCV = <span class='fl'>FALSE</span>)
-<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>obj</span>, <span class='kw'>Xtest</span>, alpha = <span class='fl'>0.1</span>)</div><div class='output co'>#&gt;       lower    upper
-#&gt; 1 -2.657190 3.545809
-#&gt; 2 -2.716094 3.161736
-#&gt; 3 -4.624691 1.790299
-#&gt; 4 -5.461906 3.939891
-#&gt; 5 -3.512057 3.066886</div><div class='input'>
+<span class='va'>obj</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>Y</span>, type <span class='op'>=</span> <span class='st'>"CQR"</span>, quantiles <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.05</span>, <span class='fl'>0.95</span><span class='op'>)</span>,
+                   outfun <span class='op'>=</span> <span class='st'>"quantRF"</span>, psfun <span class='op'>=</span> <span class='st'>"RF"</span>, useCV <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>obj</span>, <span class='va'>Xtest</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;       lower    upper
+#&gt; 1 -2.368242 2.929165
+#&gt; 2 -2.247054 2.731080
+#&gt; 3 -4.193513 1.532939
+#&gt; 4 -4.795010 2.283152
+#&gt; 5 -2.895413 2.522138</div><div class='input'>
 <span class='co'># Run split CQR with a self-defined function to estimate propensity scores</span>
 <span class='co'># Y, X, Xtest, should be included in the inputs</span>
-<span class='kw'>logitReg</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>Y</span>, <span class='kw'>X</span>, <span class='kw'>Xtest</span>, <span class='kw'>...</span>){
-    <span class='kw'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span>(<span class='kw'>X</span>)
-    <span class='kw'>Xtest</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span>(<span class='kw'>Xtest</span>)
-    <span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(Y = <span class='kw'>Y</span>, <span class='kw'>X</span>)
-    <span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='kw'>Y</span> <span class='op'>~</span> <span class='kw'>.</span>, data = <span class='kw'>data</span>, family = <span class='st'>"binomial"</span>, <span class='kw'>...</span>)
-    <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>fit</span>, <span class='kw'>Xtest</span>, type = <span class='st'>"response"</span>))
-}
-<span class='kw'>obj</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span>(<span class='kw'>X</span>, <span class='kw'>Y</span>, type = <span class='st'>"CQR"</span>, quantiles = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.05</span>, <span class='fl'>0.95</span>),
-                   outfun = <span class='st'>"quantRF"</span>, psfun = <span class='kw'>logitReg</span>, useCV = <span class='fl'>FALSE</span>)
-<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>obj</span>, <span class='kw'>Xtest</span>, alpha = <span class='fl'>0.1</span>)</div><div class='output co'>#&gt;       lower    upper
-#&gt; 1 -1.949644 3.172480
-#&gt; 2 -1.949644 2.130391
-#&gt; 3 -4.503590 1.482010
-#&gt; 4 -5.327167 2.815309
-#&gt; 5 -3.007545 1.969139</div><div class='input'>
+<span class='va'>logitReg</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>Y</span>, <span class='va'>X</span>, <span class='va'>Xtest</span>, <span class='va'>...</span><span class='op'>)</span><span class='op'>{</span>
+    <span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>X</span><span class='op'>)</span>
+    <span class='va'>Xtest</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>Xtest</span><span class='op'>)</span>
+    <span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>Y <span class='op'>=</span> <span class='va'>Y</span>, <span class='va'>X</span><span class='op'>)</span>
+    <span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span><span class='op'>(</span><span class='va'>Y</span> <span class='op'>~</span> <span class='va'>.</span>, data <span class='op'>=</span> <span class='va'>data</span>, family <span class='op'>=</span> <span class='st'>"binomial"</span>, <span class='va'>...</span><span class='op'>)</span>
+    <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>fit</span>, <span class='va'>Xtest</span>, type <span class='op'>=</span> <span class='st'>"response"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='va'>obj</span> <span class='op'>&lt;-</span> <span class='fu'>conformalCf</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>Y</span>, type <span class='op'>=</span> <span class='st'>"CQR"</span>, quantiles <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.05</span>, <span class='fl'>0.95</span><span class='op'>)</span>,
+                   outfun <span class='op'>=</span> <span class='st'>"quantRF"</span>, psfun <span class='op'>=</span> <span class='va'>logitReg</span>, useCV <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>obj</span>, <span class='va'>Xtest</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;       lower    upper
+#&gt; 1 -2.571811 3.460430
+#&gt; 2 -3.163423 3.629465
+#&gt; 3 -5.717934 2.079342
+#&gt; 4 -6.034055 4.501632
+#&gt; 5 -3.048383 2.546090</div><div class='input'>
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -383,11 +403,11 @@ can be passed into <code>psfun</code> through <code>psparams</code>.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Lihua Lei.</p>
+  <p><p>Developed by Lihua Lei.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -395,6 +415,8 @@ can be passed into <code>psfun</code> through <code>psparams</code>.</p>
 
   
 
+
+  
 
   </body>
 </html>

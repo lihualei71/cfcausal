@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">cfcausal</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -78,7 +74,7 @@
 <div id="overview" class="section level2">
 <h2 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h2>
-<p>This R package implements weighted conformal inference-based procedures for counterfactuals and individual treatment effects proposed in our paper: <a href="https://arxiv.org/abs/2006.06138">Conformal Inference of Counterfactuals and Individual Treatment Effects</a>. It includes both the split conformal inference and cross-validation+. For each type of conformal inference, both conformalized quantile regression (CQR) and standard conformal inference are supported. It provides a pool of convenient learners and allows flexible user-defined learners for conditional mean and quantiles.</p>
+<p>This R package implements weighted conformal inference-based procedures for counterfactuals and individual treatment effects proposed in our paper: <a href="https://arxiv.org/abs/2006.06138" class="external-link">Conformal Inference of Counterfactuals and Individual Treatment Effects</a>. It includes both the split conformal inference and cross-validation+. For each type of conformal inference, both conformalized quantile regression (CQR) and standard conformal inference are supported. It provides a pool of convenient learners and allows flexible user-defined learners for conditional mean and quantiles.</p>
 <ul>
 <li>
 <code><a href="reference/conformalCf.html">conformalCf()</a></code> produces intervals for counterfactuals or outcomes with missing values in general.</li>
@@ -99,13 +95,13 @@
 devtools::install_github("lihualei71/cfcausal")</code></pre>
 <p>To access the vignette, run the following code to build it.</p>
 <pre><code>devtools::install_github("lihualei71/cfcausal", build_vignettes = TRUE)</code></pre>
-<p>We suggest installing <a href="https://cran.r-project.org/web/packages/grf/grf.pdf">grf</a>, <a href="https://cran.r-project.org/web/packages/randomForest/randomForest.pdf">randomForest</a>, <a href="https://cran.r-project.org/web/packages/gbm/gbm.pdf">gbm</a> and <a href="https://cran.r-project.org/web/packages/bartMachine/bartMachine.pdf">bartMachine</a> to take advantage of the built-in learners.</p>
+<p>We suggest installing <a href="https://cran.r-project.org/web/packages/grf/grf.pdf" class="external-link">grf</a>, <a href="https://cran.r-project.org/web/packages/randomForest/randomForest.pdf" class="external-link">randomForest</a>, <a href="https://cran.r-project.org/web/packages/gbm/gbm.pdf" class="external-link">gbm</a> and <a href="https://cran.r-project.org/web/packages/bartMachine/bartMachine.pdf" class="external-link">bartMachine</a> to take advantage of the built-in learners.</p>
 </div>
 <div id="usage-examples" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage-examples" class="anchor"></a>Usage Examples</h2>
 <p>We illustrate the usage of cfcausal package using simple synthetic datasets. For details please read the vignette (<code><a href="articles/cfcausal_demo.html">vignette("cfcausal_demo", package = "cfcausal")</a></code>) and the manual.</p>
-<pre><code>#### Conformal inference of counterfactuals
+<pre><code><a href="https://rdrr.io/r/base/library.html" class="external-link">#### Conformal inference of counterfactuals
 library("cfcausal")
 
 # Generate data
@@ -135,8 +131,8 @@ predict(obj, Xtest, alpha = 0.1)
 obj &lt;- conformalCf(X, Y, type = "CQR", 
                    quantiles = c(0.05, 0.95),
                    outfun = "quantRF", useCV = TRUE)
-predict(obj, Xtest, alpha = 0.1)</code></pre>
-<pre><code>#### Conformal inference of individual treatment effects
+predict(obj, Xtest, alpha = 0.1)</a></code></pre>
+<pre><code><a href="https://rdrr.io/r/base/library.html" class="external-link">#### Conformal inference of individual treatment effects
 library("cfcausal")
 
 # Generate potential outcomes from two linear models
@@ -188,42 +184,49 @@ CIfun &lt;- conformalIte(X, Y, T, alpha = 0.1,
                       algo = "counterfactual", type = "CQR",
                       quantiles = c(0.05, 0.95), 
                       outfun = "quantRF",  useCV = FALSE)
-CIfun(Xtest, Ytest, Ttest)</code></pre>
+CIfun(Xtest, Ytest, Ttest)</a></code></pre>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
 <li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
+
+
 <div class="citation">
-<h2>Citation</h2>
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
 <li><a href="authors.html">Citing cfcausal</a></li>
 </ul>
 </div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Lihua Lei <br><small class="roles"> Maintainer </small>  </li>
 </ul>
 </div>
+
+
 
   </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Lihua Lei.</p>
+  <p></p>
+<p>Developed by Lihua Lei.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>
@@ -231,6 +234,8 @@ CIfun(Xtest, Ytest, Ttest)</code></pre>
 
   
 
+
+  
 
   </body>
 </html>
