@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">cfcausal</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.1</span>
       </span>
     </div>
 
@@ -43,7 +43,7 @@
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -67,13 +67,13 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="cfcausal" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#cfcausal" class="anchor"></a>cfcausal</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="cfcausal">cfcausal<a class="anchor" aria-label="anchor" href="#cfcausal"></a>
+</h1></div>
 <p>An R package for conformal inference of counterfactuals and individual treatment effects</p>
-<div id="overview" class="section level2">
-<h2 class="hasAnchor">
-<a href="#overview" class="anchor"></a>Overview</h2>
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
 <p>This R package implements weighted conformal inference-based procedures for counterfactuals and individual treatment effects proposed in our paper: <a href="https://arxiv.org/abs/2006.06138" class="external-link">Conformal Inference of Counterfactuals and Individual Treatment Effects</a>. It includes both the split conformal inference and cross-validation+. For each type of conformal inference, both conformalized quantile regression (CQR) and standard conformal inference are supported. It provides a pool of convenient learners and allows flexible user-defined learners for conditional mean and quantiles.</p>
 <ul>
 <li>
@@ -86,105 +86,105 @@
 <code><a href="reference/conformalInt.html">conformalInt()</a></code> provides a generic framework of weighted conformal inference for interval outcomes.</li>
 </ul>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<pre><code>if (!require("devtools")){
-    install.packages("devtools")
-}
-devtools::install_github("lihualei71/cfcausal")</code></pre>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<pre><code><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"lihualei71/cfcausal"</span><span class="op">)</span></span></code></pre>
 <p>To access the vignette, run the following code to build it.</p>
-<pre><code>devtools::install_github("lihualei71/cfcausal", build_vignettes = TRUE)</code></pre>
+<pre><code><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"lihualei71/cfcausal"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre>
 <p>We suggest installing <a href="https://cran.r-project.org/web/packages/grf/grf.pdf" class="external-link">grf</a>, <a href="https://cran.r-project.org/web/packages/randomForest/randomForest.pdf" class="external-link">randomForest</a>, <a href="https://cran.r-project.org/web/packages/gbm/gbm.pdf" class="external-link">gbm</a> and <a href="https://cran.r-project.org/web/packages/bartMachine/bartMachine.pdf" class="external-link">bartMachine</a> to take advantage of the built-in learners.</p>
 </div>
-<div id="usage-examples" class="section level2">
-<h2 class="hasAnchor">
-<a href="#usage-examples" class="anchor"></a>Usage Examples</h2>
+<div class="section level2">
+<h2 id="usage-examples">Usage Examples<a class="anchor" aria-label="anchor" href="#usage-examples"></a>
+</h2>
 <p>We illustrate the usage of cfcausal package using simple synthetic datasets. For details please read the vignette (<code><a href="articles/cfcausal_demo.html">vignette("cfcausal_demo", package = "cfcausal")</a></code>) and the manual.</p>
-<pre><code><a href="https://rdrr.io/r/base/library.html" class="external-link">#### Conformal inference of counterfactuals
-library("cfcausal")
-
-# Generate data
-set.seed(1)
-n &lt;- 1000
-d &lt;- 5
-X &lt;- matrix(rnorm(n * d), nrow = n)
-beta &lt;- rep(1, 5)
-Y &lt;- X %*% beta + rnorm(n)
-
-# Generate missing indicators
-missing_prob &lt;- pnorm(X[, 1])
-if_missing &lt;- missing_prob &lt; runif(n)
-Y[if_missing] &lt;- NA
-
-# Generate testing data
-ntest &lt;- 5
-Xtest &lt;- matrix(rnorm(ntest * d), nrow = ntest)
-
-# Run weighted split CQR
-obj &lt;- conformalCf(X, Y, type = "CQR", 
-                   quantiles = c(0.05, 0.95),
-                   outfun = "quantRF", useCV = FALSE)
-predict(obj, Xtest, alpha = 0.1)
-
-# Run weighted CQR-CV+
-obj &lt;- conformalCf(X, Y, type = "CQR", 
-                   quantiles = c(0.05, 0.95),
-                   outfun = "quantRF", useCV = TRUE)
-predict(obj, Xtest, alpha = 0.1)</a></code></pre>
-<pre><code><a href="https://rdrr.io/r/base/library.html" class="external-link">#### Conformal inference of individual treatment effects
-library("cfcausal")
-
-# Generate potential outcomes from two linear models
-set.seed(1)
-n &lt;- 1000
-d &lt;- 5
-X &lt;- matrix(rnorm(n * d), nrow = n)
-beta &lt;- rep(1, 5)
-Y1 &lt;- X %*% beta + rnorm(n)
-Y0 &lt;- rnorm(n)
-
-# Generate treatment indicators
-ps &lt;- pnorm(X[, 1])
-T &lt;- as.numeric(ps &lt; runif(n))
-Y &lt;- ifelse(T == 1, Y1, Y0)
-
-# Generate testing data
-ntest &lt;- 5
-Xtest &lt;- matrix(rnorm(ntest * d), nrow = ntest)
-
-# Inexact nested method
-CIfun &lt;- conformalIte(X, Y, T, alpha = 0.1, 
-                      algo = "nest", exact = FALSE, type = "CQR",
-                      quantiles = c(0.05, 0.95), 
-                      outfun = "quantRF", useCV = FALSE)
-CIfun(Xtest)
-
-# Exact nested method
-CIfun &lt;- conformalIte(X, Y, T, alpha = 0.1, 
-                      algo = "nest", exact = TRUE, type = "CQR",
-                      quantiles = c(0.05, 0.95), 
-                      outfun = "quantRF",  useCV = FALSE)
-CIfun(Xtest)
-
-# Naive method
-CIfun &lt;- conformalIte(X, Y, T, alpha = 0.1, 
-                      algo = "naive", type = "CQR",
-                      quantiles = c(0.05, 0.95), 
-                      outfun = "quantRF",  useCV = FALSE)
-CIfun(Xtest)
-
-# Counterfactual method, Y and T needs to be observed
-pstest &lt;- pnorm(Xtest[, 1])
-Ttest &lt;- as.numeric(pstest &lt; runif(ntest))
-Y1test &lt;- Xtest %*% beta + rnorm(ntest)
-Y0test &lt;- rnorm(ntest)
-Ytest &lt;- ifelse(Ttest == 1, Y1test, Y0test)
-CIfun &lt;- conformalIte(X, Y, T, alpha = 0.1, 
-                      algo = "counterfactual", type = "CQR",
-                      quantiles = c(0.05, 0.95), 
-                      outfun = "quantRF",  useCV = FALSE)
-CIfun(Xtest, Ytest, Ttest)</a></code></pre>
+<pre><code><span><span class="co">#### Conformal inference of counterfactuals</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"cfcausal"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Generate data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
+<span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="va">d</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span>
+<span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">X</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">beta</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Generate missing indicators</span></span>
+<span><span class="va">missing_prob</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="va">X</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">if_missing</span> <span class="op">&lt;-</span> <span class="va">missing_prob</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
+<span><span class="va">Y</span><span class="op">[</span><span class="va">if_missing</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span></span>
+<span><span class="co"># Generate testing data</span></span>
+<span><span class="va">ntest</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
+<span><span class="va">Xtest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">ntest</span> <span class="op">*</span> <span class="va">d</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="va">ntest</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Run weighted split CQR</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/conformalCf.html">conformalCf</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">Y</span>, type <span class="op">=</span> <span class="st">"CQR"</span>, </span>
+<span>                   quantiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.95</span><span class="op">)</span>,</span>
+<span>                   outfun <span class="op">=</span> <span class="st">"quantRF"</span>, useCV <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">Xtest</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Run weighted CQR-CV+</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/conformalCf.html">conformalCf</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">Y</span>, type <span class="op">=</span> <span class="st">"CQR"</span>, </span>
+<span>                   quantiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.95</span><span class="op">)</span>,</span>
+<span>                   outfun <span class="op">=</span> <span class="st">"quantRF"</span>, useCV <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">Xtest</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre>
+<pre><code><span><span class="co">#### Conformal inference of individual treatment effects</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"cfcausal"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Generate potential outcomes from two linear models</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
+<span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="va">d</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span>
+<span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">Y1</span> <span class="op">&lt;-</span> <span class="va">X</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">beta</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
+<span><span class="va">Y0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Generate treatment indicators</span></span>
+<span><span class="va">ps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="va">X</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="cn">T</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">ps</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="cn">T</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">Y1</span>, <span class="va">Y0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Generate testing data</span></span>
+<span><span class="va">ntest</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
+<span><span class="va">Xtest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">ntest</span> <span class="op">*</span> <span class="va">d</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="va">ntest</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Inexact nested method</span></span>
+<span><span class="va">CIfun</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/conformalIte.html">conformalIte</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">Y</span>, <span class="cn">T</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, </span>
+<span>                      algo <span class="op">=</span> <span class="st">"nest"</span>, exact <span class="op">=</span> <span class="cn">FALSE</span>, type <span class="op">=</span> <span class="st">"CQR"</span>,</span>
+<span>                      quantiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.95</span><span class="op">)</span>, </span>
+<span>                      outfun <span class="op">=</span> <span class="st">"quantRF"</span>, useCV <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu">CIfun</span><span class="op">(</span><span class="va">Xtest</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Exact nested method</span></span>
+<span><span class="va">CIfun</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/conformalIte.html">conformalIte</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">Y</span>, <span class="cn">T</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, </span>
+<span>                      algo <span class="op">=</span> <span class="st">"nest"</span>, exact <span class="op">=</span> <span class="cn">TRUE</span>, type <span class="op">=</span> <span class="st">"CQR"</span>,</span>
+<span>                      quantiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.95</span><span class="op">)</span>, </span>
+<span>                      outfun <span class="op">=</span> <span class="st">"quantRF"</span>,  useCV <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu">CIfun</span><span class="op">(</span><span class="va">Xtest</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Naive method</span></span>
+<span><span class="va">CIfun</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/conformalIte.html">conformalIte</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">Y</span>, <span class="cn">T</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, </span>
+<span>                      algo <span class="op">=</span> <span class="st">"naive"</span>, type <span class="op">=</span> <span class="st">"CQR"</span>,</span>
+<span>                      quantiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.95</span><span class="op">)</span>, </span>
+<span>                      outfun <span class="op">=</span> <span class="st">"quantRF"</span>,  useCV <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu">CIfun</span><span class="op">(</span><span class="va">Xtest</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Counterfactual method, Y and T needs to be observed</span></span>
+<span><span class="va">pstest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="va">Xtest</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">Ttest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">pstest</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">ntest</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">Y1test</span> <span class="op">&lt;-</span> <span class="va">Xtest</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">beta</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">ntest</span><span class="op">)</span></span>
+<span><span class="va">Y0test</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">ntest</span><span class="op">)</span></span>
+<span><span class="va">Ytest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">Ttest</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">Y1test</span>, <span class="va">Y0test</span><span class="op">)</span></span>
+<span><span class="va">CIfun</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/conformalIte.html">conformalIte</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">Y</span>, <span class="cn">T</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, </span>
+<span>                      algo <span class="op">=</span> <span class="st">"counterfactual"</span>, type <span class="op">=</span> <span class="st">"CQR"</span>,</span>
+<span>                      quantiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.95</span><span class="op">)</span>, </span>
+<span>                      outfun <span class="op">=</span> <span class="st">"quantRF"</span>,  useCV <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu">CIfun</span><span class="op">(</span><span class="va">Xtest</span>, <span class="va">Ytest</span>, <span class="va">Ttest</span><span class="op">)</span></span></code></pre>
 </div>
 </div>
   </div>
@@ -194,7 +194,7 @@ CIfun(Xtest, Ytest, Ttest)</a></code></pre>
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
+<li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
 
@@ -202,7 +202,7 @@ CIfun(Xtest, Ytest, Ttest)</a></code></pre>
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html">Citing cfcausal</a></li>
+<li><a href="authors.html#citation">Citing cfcausal</a></li>
 </ul>
 </div>
 
@@ -226,7 +226,7 @@ CIfun(Xtest, Ytest, Ttest)</a></code></pre>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer>

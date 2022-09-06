@@ -1,7 +1,7 @@
 pandoc: 2.7.3
-pkgdown: 1.6.1.9001
-pkgdown_sha: a48e6280894bcfd718e04deaabccd2d84fefb48d
+pkgdown: 2.0.6.9000
+pkgdown_sha: 956f076f661eb2de9413f64ea24a580cf444466d
 articles:
   cfcausal_demo: cfcausal_demo.html
-last_built: 2021-04-02T05:23Z
+last_built: 2022-09-06T19:13Z
 
