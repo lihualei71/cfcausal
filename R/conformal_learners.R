@@ -1,7 +1,7 @@
 ## quantile random forest. grf package needed
 quantRF <- function(Y, X, Xtest, quantiles, ...){
     fit <- grf::quantile_forest(X, Y, quantiles = quantiles, ...)
-    res <- predict(fit, Xtest, quantiles = quantiles)
+    res <- predict(fit, Xtest, quantiles = quantiles)$predictions
     if (length(quantiles) == 1){
         res <- as.numeric(res)
     } else {
@@ -37,7 +37,7 @@ RF <- function(Y, X, Xtest, ...){
 
 ## quantile gradient boosting. gbm package needed
 quantBoosting <- function(Y, X, Xtest, quantiles, n.trees = 100, ...){
-    if (class(X) != "data.frame"){
+    if (class(X)[1] != "data.frame"){
         X <- as.data.frame(X)
         Xtest <- as.data.frame(Xtest)
         names(Xtest) <- names(X)
@@ -55,7 +55,7 @@ quantBoosting <- function(Y, X, Xtest, quantiles, n.trees = 100, ...){
 
 ## gradient boosting. gbm package needed
 Boosting <- function(Y, X, Xtest, n.trees = 100, ...){
-    if (class(X) != "data.frame"){
+    if (class(X)[1] != "data.frame"){
         X <- as.data.frame(X)
         Xtest <- as.data.frame(Xtest)
         names(Xtest) <- names(X)
@@ -76,7 +76,7 @@ Boosting <- function(Y, X, Xtest, n.trees = 100, ...){
 ## posterior quantiles of BART. bartMachine package needed
 quantBART <- function(Y, X, Xtest, quantiles,
                       ndpost = 100, ...){
-    if (class(X) != "data.frame"){
+    if (class(X)[1] != "data.frame"){
         X <- as.data.frame(X)
         Xtest <- as.data.frame(Xtest)
         names(Xtest) <- names(X)
@@ -112,7 +112,7 @@ quantBART <- function(Y, X, Xtest, quantiles,
 ## BART. bartMachine package needed
 BART <- function(Y, X, Xtest,
                  ndpost = 100, ...){
-    if (class(X) != "data.frame"){
+    if (class(X)[1] != "data.frame"){
         X <- as.data.frame(X)
         Xtest <- as.data.frame(Xtest)
         names(Xtest) <- names(X)

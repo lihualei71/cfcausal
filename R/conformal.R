@@ -132,7 +132,7 @@
 #' # Y, X, Xtest, quantiles should be included in the inputs
 #' quantRF <- function(Y, X, Xtest, quantiles, ...){
 #'     fit <- grf::quantile_forest(X, Y, quantiles = quantiles, ...)
-#'     res <- predict(fit, Xtest, quantiles = quantiles)
+#'     res <- predict(fit, Xtest, quantiles = quantiles)$predictions
 #'     if (length(quantiles) == 1){
 #'         res <- as.numeric(res)
 #'     } else {
