@@ -1,7 +1,10 @@
 ## quantile random forest. grf package needed
 quantRF <- function(Y, X, Xtest, quantiles, ...){
     fit <- grf::quantile_forest(X, Y, quantiles = quantiles, ...)
-    res <- predict(fit, Xtest, quantiles = quantiles)$predictions
+    res <- predict(fit, Xtest, quantiles = quantiles)
+    if (is.list(res) && !is.data.frame(res)){
+        res <- res$predictions
+    }
     if (length(quantiles) == 1){
         res <- as.numeric(res)
     } else {
@@ -81,7 +84,8 @@ quantBART <- function(Y, X, Xtest, quantiles,
         Xtest <- as.data.frame(Xtest)
         names(Xtest) <- names(X)
     }
-    fit <- bartMachine::bartMachine(X, Y, verbose = FALSE)
+    y <- Y
+    fit <- bartMachine::bartMachine(X, y, verbose = FALSE)
     if (length(quantiles) == 2){
         if (sum(quantiles) != 1){
             warning("Two quantiles should sum up to 1.")
@@ -117,7 +121,8 @@ BART <- function(Y, X, Xtest,
         Xtest <- as.data.frame(Xtest)
         names(Xtest) <- names(X)
     }
-    fit <- bartMachine::bartMachine(X, Y, verbose = FALSE)
+    y <- Y
+    fit <- bartMachine::bartMachine(X, y, verbose = FALSE)
     res <- predict(fit, Xtest)
     return(res)
 }
