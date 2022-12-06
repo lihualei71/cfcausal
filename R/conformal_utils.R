@@ -21,13 +21,16 @@ find_inds <- function(a, b){
 ##     return(cutoff)
 ## }
 
-weightedConformalCutoff <- function(score, weight, qt){
+weightedConformalCutoff <- function(score, weight, qt, useInf){
     ord <- order(score)
     weight <- weight[ord]
     score <- score[ord]
     cw <- cumsum(weight)
-    inds <- find_inds(cw, qt)    
+    inds <- find_inds(cw, pmin(qt, 1))
     cutoff <- score[inds]
+    if (useInf){
+        cutoff[qt >= 1] <- Inf
+    }
     return(cutoff)
 }
 

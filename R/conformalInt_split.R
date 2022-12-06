@@ -78,6 +78,7 @@ conformalIntSplit <- function(X, Y,
 #' @param alpha confidence level.
 #' @param wthigh upper truncation level of weights; see Details.
 #' @param wtlow lower truncation level of weights; see Details.
+#' @param useInf if FALSE then replace infinity by the maximum conformity score.
 #' @param ... other arguments
 #'
 #' @return predictive intervals. A data.frame with \code{nrow(Xtest)} rows and two columns:
@@ -90,6 +91,7 @@ conformalIntSplit <- function(X, Y,
 predict.conformalIntSplit <- function(object, Xtest,
                                       alpha = 0.1,
                                       wthigh = 20, wtlow = 0.05,
+                                      useInf = FALSE,
                                       ...){
     type <- object$type
     Yhat_test <- cbind(object$Ymodel[[1]](Xtest),
@@ -103,8 +105,7 @@ predict.conformalIntSplit <- function(object, Xtest,
     totw <- sum(wt)
     wt <- wt / totw
     qt <- (1 + wt_test / totw) * (1 - alpha)
-    qt <- pmin(qt, 1)
-    Yslack <- weightedConformalCutoff(object$Yscore, wt, qt)
+    Yslack <- weightedConformalCutoff(object$Yscore, wt, qt, useInf)
 
     Ylo <- Yhat_test[, 1] - Yslack
     Yup <- Yhat_test[, 2] + Yslack

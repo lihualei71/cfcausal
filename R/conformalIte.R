@@ -112,6 +112,7 @@
 #' @param nfolds number of folds. The default is 10. Used only when \code{useCV = TRUE}. 
 #' @param wthigh upper truncation level of weights. See \code{\link{predict.conformalSplit}} or \code{\link{predict.conformalCV}}.
 #' @param wtlow lower truncation level of weights. See \code{\link{predict.conformalSplit}} or \code{\link{predict.conformalCV}}.
+#' @param useInf if FALSE then replace infinity by the maximum conformity score.
 #'
 #' @return a function that outputs the interval estimates on a given dataset. When \code{algo = "nest"} or \code{"naive"}, it takes
 #' a single input \code{X}; when \code{algo = "counterfactual"}, it takes three inputs \code{X}, \code{Y} and \code{T}.
@@ -189,7 +190,8 @@ conformalIte <- function(X, Y, T,
                          useCV = FALSE,
                          trainprop = 0.75,
                          nfolds = 10,
-                         wthigh = 20, wtlow = 0.05){
+                         wthigh = 20, wtlow = 0.05,
+                         useInf = FALSE){
     ## Check the format
     type <- type[1]
     stopifnot(type %in% c("CQR", "mean"))
@@ -259,7 +261,8 @@ conformalIte <- function(X, Y, T,
                                 upfun, upquantile, upparams,
                                 useCV,
                                 trainprop, nfolds,
-                                wthigh, wtlow)
+                                wthigh, wtlow,
+                                useInf)
         function(X){
             predict(obj, X)
         }
@@ -272,7 +275,7 @@ conformalIte <- function(X, Y, T,
                                  useCV,
                                  trainprop, nfolds)
         function(X){
-            predict(obj, X, alpha, wthigh, wtlow)$Ite
+            predict(obj, X, alpha, wthigh, wtlow, useInf)$Ite
         }
     } else if (algo == "counterfactual"){
         obj <- conformalIteCf(X, Y, T,
@@ -283,7 +286,7 @@ conformalIte <- function(X, Y, T,
                               useCV,
                               trainprop, nfolds)
         function(X, Y, T){
-            predict(obj, X, Y, T, alpha, wthigh, wtlow)
+            predict(obj, X, Y, T, alpha, wthigh, wtlow, useInf)
         }
     }
 }

@@ -14,7 +14,8 @@ conformalIteNest <- function(X, Y, T,
                              useCV,
                              trainprop,
                              nfolds,
-                             wthigh, wtlow){
+                             wthigh, wtlow,
+                             useInf){
     ## Reset effective alpha based on exact
     if (exact){
         alpha <- alpha / 2
@@ -50,7 +51,7 @@ conformalIteNest <- function(X, Y, T,
                           trainprop,
                           nfolds)
     CI_cf <- predict(obj, Xcf, Ycf, Tcf,
-                     alpha, wthigh, wtlow)
+                     alpha, wthigh, wtlow, useInf)
 
     ## Get ITE intervals
     if (exact && (side == "two")){
@@ -64,7 +65,7 @@ conformalIteNest <- function(X, Y, T,
                                 useCV,
                                 trainprop, NULL,
                                 nfolds, NULL)
-            predict(res, X, alpha, wthigh, wtlow)
+            predict(res, X, alpha, wthigh, wtlow, useInf)
         }
     } else if (exact && (side == "above")){
         ## Exact right-sided intervals
@@ -76,7 +77,7 @@ conformalIteNest <- function(X, Y, T,
                              useCV,
                              trainprop, NULL,
                              nfolds, NULL)
-            upper <- predict(res, X, alpha, wthigh, wtlow)[, 2]
+            upper <- predict(res, X, alpha, wthigh, wtlow, useInf)[, 2]
             data.frame(lower = -Inf, upper = upper)
         }
     } else if (exact && (side == "below")){
@@ -89,7 +90,7 @@ conformalIteNest <- function(X, Y, T,
                              useCV,
                              trainprop, NULL,
                              nfolds, NULL)
-            lower <- predict(res, X, alpha, wthigh, wtlow)[, 1]
+            lower <- predict(res, X, alpha, wthigh, wtlow, useInf)[, 1]
             data.frame(lower = lower, upper = Inf)
         }
     } else if (!exact && (side == "two")){

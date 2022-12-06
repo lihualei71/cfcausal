@@ -35,9 +35,10 @@ conformalIteNaive <- function(X, Y, T,
                         useCV,
                         trainprop,
                         nfolds)
-    Y1_CIfun <- function(X, alpha, wthigh, wtlow){
+    Y1_CIfun <- function(X, alpha, wthigh, wtlow, useInf){
         predict(obj1, X, alpha = alpha / 2,
-                wthigh = wthigh, wtlow = wtlow)
+                wthigh = wthigh, wtlow = wtlow,
+                useInf = useInf)
     }
 
     estimand0 <- "missing"
@@ -59,14 +60,15 @@ conformalIteNaive <- function(X, Y, T,
                         useCV,
                         trainprop,
                         nfolds)
-    Y0_CIfun <- function(X, alpha, wthigh, wtlow){
+    Y0_CIfun <- function(X, alpha, wthigh, wtlow, useInf){
         predict(obj0, X, alpha = alpha / 2,
-                wthigh = wthigh, wtlow = wtlow)
+                wthigh = wthigh, wtlow = wtlow,
+                useInf = useInf)
     }
 
-    Ite_CIfun <- function(X, alpha, wthigh, wtlow){
-        Y1_CI <- Y1_CIfun(X, alpha, wthigh, wtlow)
-        Y0_CI <- Y0_CIfun(X, alpha, wthigh, wtlow)
+    Ite_CIfun <- function(X, alpha, wthigh, wtlow, useInf){
+        Y1_CI <- Y1_CIfun(X, alpha, wthigh, wtlow, useInf)
+        Y0_CI <- Y0_CIfun(X, alpha, wthigh, wtlow, useInf)
         CI <- data.frame(lower = Y1_CI[, 1] - Y0_CI[, 2],
                          upper = Y1_CI[, 2] - Y0_CI[, 1])
     }
@@ -80,9 +82,10 @@ conformalIteNaive <- function(X, Y, T,
 
 predict.conformalIteNaive <- function(object, Xtest,
                                       alpha = 0.1,
-                                      wthigh = 20, wtlow = 0.05){
-    Ite_CI <- object$Ite_CIfun(Xtest, alpha, wthigh, wtlow)
-    Y1_CI <- object$Y1_CIfun(Xtest, alpha, wthigh, wtlow)
-    Y0_CI <- object$Y0_CIfun(Xtest, alpha, wthigh, wtlow)
+                                      wthigh = 20, wtlow = 0.05,
+                                      useInf = FALSE){
+    Ite_CI <- object$Ite_CIfun(Xtest, alpha, wthigh, wtlow, useInf)
+    Y1_CI <- object$Y1_CIfun(Xtest, alpha, wthigh, wtlow, useInf)
+    Y0_CI <- object$Y0_CIfun(Xtest, alpha, wthigh, wtlow, useInf)
     list(Ite = Ite_CI, Y1 = Y1_CI, Y0 = Y0_CI)
 }

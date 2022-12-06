@@ -18,8 +18,8 @@ conformalIteCf <- function(X, Y, T,
                              nfolds)
 
     CIfun <- function(X, Y, T,
-                      alpha, wthigh, wtlow){
-        res <- predict(obj, X, 2 * alpha, wthigh, wtlow)
+                      alpha, wthigh, wtlow, useInf){
+        res <- predict(obj, X, 2 * alpha, wthigh, wtlow, useInf)
         CI <- matrix(NA, nrow(X), 2)
         CI[T == 1, 1] <- Y[T == 1] - res$Y0[T == 1, 2]
         CI[T == 1, 2] <- Y[T == 1] - res$Y0[T == 1, 1]
@@ -38,6 +38,7 @@ conformalIteCf <- function(X, Y, T,
 predict.conformalIteCf <- function(object,
                                    Xtest, Ytest, Ttest,
                                    alpha = 0.1,
-                                   wthigh = 20, wtlow = 0.05){
-    object$CIfun(Xtest, Ytest, Ttest, alpha, wthigh, wtlow)
+                                   wthigh = 20, wtlow = 0.05,
+                                   useInf = FALSE){
+    object$CIfun(Xtest, Ytest, Ttest, alpha, wthigh, wtlow, useInf)
 }

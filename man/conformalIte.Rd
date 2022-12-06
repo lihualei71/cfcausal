@@ -30,7 +30,8 @@ conformalIte(
   trainprop = 0.75,
   nfolds = 10,
   wthigh = 20,
-  wtlow = 0.05
+  wtlow = 0.05,
+  useInf = FALSE
 )
 }
 \arguments{
@@ -94,6 +95,8 @@ Used only when \code{algo = "nest"} and \code{exact = TRUE}.}
 \item{wthigh}{upper truncation level of weights. See \code{\link{predict.conformalSplit}} or \code{\link{predict.conformalCV}}.}
 
 \item{wtlow}{lower truncation level of weights. See \code{\link{predict.conformalSplit}} or \code{\link{predict.conformalCV}}.}
+
+\item{useInf}{if FALSE then replace infinity by the maximum conformity score.}
 }
 \value{
 a function that outputs the interval estimates on a given dataset. When \code{algo = "nest"} or \code{"naive"}, it takes

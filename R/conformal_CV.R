@@ -95,6 +95,7 @@ conformalCV <- function(X, Y,
 #' @param alpha confidence level.
 #' @param wthigh upper truncation level of weights; see Details.
 #' @param wtlow lower truncation level of weights; see Details.
+#' @param useInf if FALSE then replace infinity by the maximum conformity score.
 #' @param ... other arguments
 #'
 #' @return predictive intervals. A data.frame with \code{nrow(Xtest)} rows and two columns:
@@ -107,6 +108,7 @@ conformalCV <- function(X, Y,
 predict.conformalCV <- function(object, Xtest,
                                 alpha = 0.1,
                                 wthigh = 20, wtlow = 0.05,
+                                useInf = FALSE,
                                 ...){
     type <- object$type
     side <- object$side
@@ -133,7 +135,7 @@ predict.conformalCV <- function(object, Xtest,
     totw <- sum(wt)
     wt <- wt / totw
     qt <- (1 + wt_test / totw) * (1 - alpha)
-    qt <- pmin(qt, 1)
+    ## qt <- pmin(qt, 1)
 
     if (type == "CQR" && side == "two"){
         CI <- sapply(1:length(qt), function(i){
@@ -141,12 +143,12 @@ predict.conformalCV <- function(object, Xtest,
                 x$Yhat_test[i, 1] - x$Yscore
             })
             Ylo <- do.call(c, Ylo)
-            Ylo <- -weightedConformalCutoff(-Ylo, wt, qt[i])
+            Ylo <- -weightedConformalCutoff(-Ylo, wt, qt[i], useInf)
             Yup <- lapply(info, function(x){
                 x$Yhat_test[i, 2] + x$Yscore
             })
             Yup <- do.call(c, Yup)
-            Yup <- weightedConformalCutoff(Yup, wt, qt[i])
+            Yup <- weightedConformalCutoff(Yup, wt, qt[i], useInf)
             c(Ylo, Yup)
         })
     } else if (type == "mean" && side == "two"){
@@ -155,12 +157,12 @@ predict.conformalCV <- function(object, Xtest,
                 x$Yhat_test[i] - x$Yscore
             })
             Ylo <- do.call(c, Ylo)
-            Ylo <- -weightedConformalCutoff(-Ylo, wt, qt[i])
+            Ylo <- -weightedConformalCutoff(-Ylo, wt, qt[i], useInf)
             Yup <- lapply(info, function(x){
                 x$Yhat_test[i] + x$Yscore
             })
             Yup <- do.call(c, Yup)
-            Yup <- weightedConformalCutoff(Yup, wt, qt[i])
+            Yup <- weightedConformalCutoff(Yup, wt, qt[i], useInf)
             c(Ylo, Yup)
         })
     } else if (side == "above"){
@@ -170,7 +172,7 @@ predict.conformalCV <- function(object, Xtest,
                 x$Yhat_test[i] + x$Yscore
             })
             Yup <- do.call(c, Yup)
-            Yup <- weightedConformalCutoff(Yup, wt, qt[i])
+            Yup <- weightedConformalCutoff(Yup, wt, qt[i], useInf)
             c(Ylo, Yup)
         })
     } else if (side == "below"){
@@ -179,7 +181,7 @@ predict.conformalCV <- function(object, Xtest,
                 x$Yhat_test[i] - x$Yscore
             })
             Ylo <- do.call(c, Ylo)
-            Ylo <- -weightedConformalCutoff(-Ylo, wt, qt[i])
+            Ylo <- -weightedConformalCutoff(-Ylo, wt, qt[i], useInf)
             Yup <- Inf
             c(Ylo, Yup)
         })

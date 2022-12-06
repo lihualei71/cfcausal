@@ -4,7 +4,15 @@
 \alias{predict.conformalIntCV}
 \title{Predict Method for conformalIntCV objects}
 \usage{
-\method{predict}{conformalIntCV}(object, Xtest, alpha = 0.1, wthigh = 20, wtlow = 0.05, ...)
+\method{predict}{conformalIntCV}(
+  object,
+  Xtest,
+  alpha = 0.1,
+  wthigh = 20,
+  wtlow = 0.05,
+  useInf = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{an object of class \code{conformalIntCV}; see \code{\link{conformalInt}}.}
@@ -16,6 +24,8 @@
 \item{wthigh}{upper truncation level of weights; see Details.}
 
 \item{wtlow}{lower truncation level of weights; see Details.}
+
+\item{useInf}{if FALSE then replace infinity by the maximum conformity score.}
 
 \item{...}{other arguments}
 }
